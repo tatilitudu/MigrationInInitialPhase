@@ -37,7 +37,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	double hand	= 0.35;						// handling time
 	double beta	= 0.5;						// intraspecific competition
 	double aij	= 6.0;						// attack rate
-	double migratingPop = 0.00001;
+	double migratingPop = 0.01;
 	
 	int i, j,l	= 0;						// Hilfsvariablen
 	double rowsum	= 0;	

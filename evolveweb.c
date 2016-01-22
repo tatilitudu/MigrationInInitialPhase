@@ -184,7 +184,7 @@ Er wird definiert über vier Größen
     {
       stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
       gsl_vector_set(nicheweb.migrPara, 0 , gsl_vector_get(nicheweb.migrPara, 0)+t);
-//       printf("ydotmigr ist %f\n", gsl_vector_get(nicheweb.migrPara, 5));
+      //printf("ydotmigr ist %f\n", gsl_vector_get(nicheweb.migrPara, 5));
       //printf("mu ist %f\n", gsl_vector_get(nicheweb.migrPara, 1));
       //printf("nu ist %f\n", gsl_vector_get(nicheweb.migrPara, 2));
       migrationEventNumber++;
@@ -233,7 +233,7 @@ Er wird definiert über vier Größen
     tlast = t;
     if(t > gsl_vector_get(nicheweb.migrPara, 0)&& migrationEventNumber < Z)
     {
-      stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
+      stochMigration_version2(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
       gsl_vector_set(nicheweb.migrPara, 0 , gsl_vector_get(nicheweb.migrPara, 0)+t);
 //       printf("ydotmigr ist %f\n", gsl_vector_get(nicheweb.migrPara, 5));
       //printf("mu ist %f\n", gsl_vector_get(nicheweb.migrPara, 1));
@@ -278,6 +278,7 @@ Er wird definiert über vier Größen
 	}
 	t = tend2;
       }
+//--Ende Test-----------------------------------------------------------------------------------------------------------------
 	// if(status == GSL_SUCCESS)	printf("Status OK\n");
 
   	

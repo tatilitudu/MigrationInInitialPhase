@@ -91,7 +91,7 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
     
     //printf("Berechne Zeitpunkte, zu den migriert werden soll:\n");
     double tau = choose_time(atot, rng1);
-    printf("tau ist %f\n",tau);
+    //printf("tau ist %f\n",tau);
     gsl_vector_set(nicheweb.migrPara, 0, tau);
 
     //printf("\n");
@@ -132,7 +132,7 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
     //r2 = (double)rand()/INT_MAX;
     //printf("r2 ist %f\n",r2);
     int Choice = 0;
-    SpeciesNumber = select_species_random(nicheweb, stochastic, rng1);
+    SpeciesNumber = select_species(nicheweb, stochastic, rng1, 0, y, migrationEventNumber, mu);
     gsl_vector_set(stochastic.SpeciesNumbers, migrationEventNumber, SpeciesNumber);
     
     gsl_vector_set(nicheweb.migrPara, 3, SpeciesNumber);
