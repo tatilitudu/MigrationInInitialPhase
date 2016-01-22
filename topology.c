@@ -23,7 +23,6 @@ gsl_matrix *SetTopology(int Y, int T, gsl_matrix* D){
 int i = 0;
 
 
-
 	switch(T)
 	{
 		//--Keine-----------------------------------------------------

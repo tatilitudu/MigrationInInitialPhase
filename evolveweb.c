@@ -33,7 +33,7 @@
 #include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_errno.h>
 
-gsl_vector* EvolveNetwork(struct foodweb nicheweb, struct migration stochastic, gsl_rng* rng1, const gsl_rng_type* rng1_T, gsl_vector* result)
+gsl_vector* EvolveNetwork(struct foodweb nicheweb, struct migration stochastic, gsl_rng* rng1, const gsl_rng_type* rng1_T, gsl_matrix* Dchoice, gsl_vector* result)
 {	
 	struct foodweb *params = &nicheweb; 									// Damit Holling2 auf das foodweb zugreifen kann
 
@@ -41,7 +41,8 @@ gsl_vector* EvolveNetwork(struct foodweb nicheweb, struct migration stochastic, 
 	int Y 	     	= nicheweb.Y;
 	int Rnum 	= nicheweb.Rnum;
 	int Z 		= nicheweb.Z;
-	int Tchoice = nicheweb.Tchoice;
+	int Tchoice 	= nicheweb.Tchoice;
+	double tcheck	= 7805; 
 	
 	double Rsize = gsl_vector_get(nicheweb.network, (Rnum+S)*(Rnum+S)+Y*Y+2);
 		
@@ -56,7 +57,6 @@ gsl_vector* EvolveNetwork(struct foodweb nicheweb, struct migration stochastic, 
 	gsl_vector *ymin	= gsl_vector_calloc((Rnum+S)*Y);						// Minimalwerte nach t2
 	gsl_vector *yavg	= gsl_vector_calloc((Rnum+S)*Y);						// Durchschnittswert nach t2
 
-	gsl_matrix* Dchoice	= gsl_matrix_calloc(Y,Y);
 //--Zufallszahlengenerator für Populationsgrößen----------------------------------------------------------------------------------------------------------
 
 // 	const gsl_rng_type *rng1_T;							// Für zufällige Populationsgröße der Spezies
@@ -130,7 +130,10 @@ Er wird definiert über vier Größen
   double h		= 1e-5;				// stepwidth
 
   double countsteps = 0;			// Schritte
-
+  double mu=0, nu=0, tau = 0;
+  double tlast = tend1;
+  int SpeciesNumber;
+  int migrationEventNumber = 0;
   
   //printf("Z ist %i\n",Z);
 //  int docheck 		= 0;			
@@ -139,11 +142,25 @@ Er wird definiert über vier Größen
 	
 	printf("\nStarte Lösen der Populationsdynamik\n\n");	
 	
+	
+  if(Y>1)
+  {
+    stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
+    //gsl_vector_set(nicheweb.migrPara, 0 , gsl_vector_get(nicheweb.migrPara, 0));
+    printf("migrationereignis zum Zeipunkt %f\n",gsl_vector_get(nicheweb.migrPara, 0));
+  }
+  else
+  {
+    printf("Es gibt nur ein Patch, sodass keine Migration stattfinden kann\n");
+  }	
+  
+  
   while(t < tend1)					
   { 
+    gsl_vector_set(nicheweb.migrPara, 4,tlast);	
 	//for(i=0; i<Rnum+S; i++)printf("y[i]%f\n", y[i]);	// Startgrößen
 		
-	 int status = gsl_odeiv_evolve_apply(e, c, s, &sys, &t, tend1, &h, y);	 			
+    int status = gsl_odeiv_evolve_apply(e, c, s, &sys, &t, tend1, &h, y);	 			
 	/*status = Ergebnis für einen Zeitschritt der DGL Lösung. 
 	  HollingII wird mit t, y, params, aufgerufen, die Ergebnisse legt es dann in ydot ab. 
 	  Die Werte in ydot werden dann als neue Werte für y verwendet.*/
@@ -160,6 +177,20 @@ Er wird definiert über vier Größen
 		  if(y[i] < 1.0e-5) 
 			 y[i] = 0;			// bei Populationsgrößen kleiner als 10^-5 gilt die Population als ausgestorben
      }
+     
+     
+    tlast = t;
+    if(t > gsl_vector_get(nicheweb.migrPara, 0)&& migrationEventNumber < Z)
+    {
+      stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
+      gsl_vector_set(nicheweb.migrPara, 0 , gsl_vector_get(nicheweb.migrPara, 0)+t);
+//       printf("ydotmigr ist %f\n", gsl_vector_get(nicheweb.migrPara, 5));
+      //printf("mu ist %f\n", gsl_vector_get(nicheweb.migrPara, 1));
+      //printf("nu ist %f\n", gsl_vector_get(nicheweb.migrPara, 2));
+      migrationEventNumber++;
+    }
+    
+    
   }
 
   for(i=0; i < (Rnum+S)*Y; i++)		// Referenzwerte in min und max schreiben = Wert von y nach t = 7800 
@@ -177,23 +208,6 @@ Er wird definiert über vier Größen
 	//printf("t=%f\n", t);	
 
   //double migrationWerte[4];
-  double mu=0, nu=0, tau = 0;
-  double tlast = tend1;
-  int SpeciesNumber;
-  int migrationEventNumber = 0;
-  
-  Dchoice    = SetTopology(Y, Tchoice, Dchoice);
-  
-  if(Y>1)
-  {
-    stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
-    gsl_vector_set(nicheweb.migrPara, 0 , gsl_vector_get(nicheweb.migrPara, 0)+tend1);
-  }
-  else
-  {
-    printf("Es gibt nur ein Patch, sodass keine Migration stattfinden kann\n");
-  }
-
   
   while(t < tend2)
   {
@@ -239,7 +253,31 @@ Er wird definiert über vier Größen
 		  gsl_vector_set(yavg, i, ((gsl_vector_get(yavg, i)*(countsteps-1)+y[i])/countsteps));
       }
       
-
+      
+//--Zum Testen, ob im Mittel das Gleiche wie bei deterministischen Migration rauskommt; sonst auskommentieren!!!---------------------------------------------      
+      if(t> tcheck )
+      {
+	int j,k;
+	//printf("migrationEventNumber ist %i\n", migrationEventNumber);
+	
+	for(k = 0; k < migrationEventNumber; k++)
+	{
+	    //printf("stochastic.AllMus ist %f\n",gsl_vector_get(stochastic.AllMus,k));
+	    gsl_vector_set(stochastic.AllMus, k,0);
+	    gsl_vector_set(stochastic.AllNus, k,0);
+	    gsl_vector_set(stochastic.SpeciesNumbers, k,0);
+	    //printf("stochastic.AllMus ist nachher %f\n",gsl_vector_get(stochastic.AllMus,k));
+	}
+	migrationEventNumber = 0;
+	for(j = 0 ; j < Z; j++)
+	{
+	  
+	  stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
+	  migrationEventNumber++;
+	
+	}
+	t = tend2;
+      }
 	// if(status == GSL_SUCCESS)	printf("Status OK\n");
 
   	
@@ -287,7 +325,7 @@ Er wird definiert über vier Größen
 	gsl_vector_free(ymin);
 	gsl_vector_free(yavg);
 	gsl_odeiv_step_free(s);
-	gsl_matrix_free(Dchoice);
+	
  //	gsl_rng_free(rng1);
 
 	gsl_odeiv_control_free(c);

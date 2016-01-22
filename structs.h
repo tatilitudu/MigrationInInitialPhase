@@ -39,6 +39,7 @@ struct migration{
 	gsl_vector* Biomass_SpeciesNumbers;
 	gsl_vector* Biomass_AllMus;
 	gsl_vector* Biomass_AllNus;
+	double Bmigr;
 	
 };
 

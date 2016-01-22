@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 
 	struct foodweb nicheweb	= {NULL, fixpunkte, NULL, 18, 3, 1, 5, 0, 0, -7., 0.0, 0, 1};		// Reihenfolge: network, fxpkt, migrPara, AllMus, AllNus, S, B, Rnum, Y, T, Tchoice, d, x, M, Z
 	
-	struct migration stochastic = {NULL, NULL, NULL, NULL, NULL, NULL};
+	struct migration stochastic = {NULL, NULL, NULL, NULL, NULL, NULL, 0.01};
 	
 	struct resource res = {500.0, 0.0};											// Resource: Größe, Wachstum
 	
@@ -161,6 +161,7 @@ int main(int argc, char** argv)
 	gsl_vector *resultEvolveWeb	= gsl_vector_calloc((nicheweb.Rnum+nicheweb.S)*nicheweb.Y*5 + 3 + nicheweb.S); 				// y[Simulation], y0, ymax, ymin, yavg, fixp, TL
 	gsl_vector *resultRobustness 	= gsl_vector_calloc(63);
 	gsl_matrix *D 			= gsl_matrix_calloc(nicheweb.Y,nicheweb.Y);
+	gsl_matrix* Dchoice		= gsl_matrix_calloc(nicheweb.Y,nicheweb.Y);
 	
 	gsl_vector *robustnesstemp	= gsl_vector_calloc(63);
 	gsl_vector *meanSquOfDataAll 	= gsl_vector_calloc(63);
@@ -197,7 +198,8 @@ int main(int argc, char** argv)
 	int lastMigrationEventNumber = 0;
 
 //--Simulation---------------------------------------------------------------------------------------------------------------------
-	D    = SetTopology(nicheweb.Y, nicheweb.T, D);		
+	D    = SetTopology(nicheweb.Y, nicheweb.T, D);	
+	Dchoice    = SetTopology(nicheweb.Y, nicheweb.Tchoice, Dchoice);
 	for(i = 0; i < L; i++)																							
 	 { 	
 // 		const gsl_rng_type *rng1_T;											// ****
@@ -213,7 +215,7 @@ int main(int argc, char** argv)
 //--Starte Simulation-----------------------------------------------------------------------------------------------			
 		SetNicheNetwork(nicheweb, res, rng1, rng1_T, D);
 		gsl_vector_set_zero(resultEvolveWeb);
-		populationFIN	 = EvolveNetwork(nicheweb, stochastic, rng1, rng1_T, resultEvolveWeb);
+		populationFIN	 = EvolveNetwork(nicheweb, stochastic, rng1, rng1_T, Dchoice, resultEvolveWeb);
 			
 		gsl_vector_set_zero(resultRobustness);										
 		gsl_vector_memcpy(robustnesstemp, EvaluateRobustness(populationFIN, nicheweb, patchwise, resultRobustness));	// Robustness Analyse
@@ -356,6 +358,7 @@ int main(int argc, char** argv)
 	gsl_vector_free(meanSquOfDataAll);
 	gsl_vector_free(meanSquOfDataAlltemp);
 	gsl_matrix_free(D);
+	gsl_matrix_free(Dchoice);
 	//gsl_vector_free(resultEvolveWeb);
 	gsl_vector_free(robustnesstemp);
 	gsl_rng_free(rng1);

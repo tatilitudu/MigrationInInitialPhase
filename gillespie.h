@@ -16,11 +16,13 @@
 #include <gsl/gsl_vector.h>
 
 
-double* stochMigration(struct foodweb nicheweb, struct migration, const double[], gsl_rng* rng1, const gsl_rng_type* rng1_T, int, gsl_matrix* Dchoice);
-int select_patch(struct migration stochastic, gsl_vector*, double, gsl_rng* rng1, int, int, int);
+int stochMigration(struct foodweb nicheweb, struct migration, const double[], gsl_rng* rng1, const gsl_rng_type* rng1_T, int, gsl_matrix* Dchoice);
+int select_patch(struct migration stochastic, gsl_vector*, double, gsl_rng* rng1, int);
 int select_patch_random(struct foodweb nicheweb, gsl_rng* rng1);
-int select_species(struct foodweb nicheweb, struct migration stochastic, gsl_rng* rng1, int, const double[], int);
+int select_species(struct foodweb nicheweb, struct migration stochastic, gsl_rng* rng1, int, const double[], int, int);
 double choose_time(double, gsl_rng* rng1);
 int select_species_random(struct foodweb nicheweb, struct migration stochastic, gsl_rng* rng1);
+int stochMigration_version2(struct foodweb nicheweb, struct migration stochastic, const double y[], gsl_rng* rng1, const gsl_rng_type* rng1_T, int migrationEventNumber, gsl_matrix* Dchoice);
+gsl_vector* select_patch_and_species(struct foodweb nicheweb, struct migration stochastic, gsl_vector* , double, int,gsl_rng* rng1, gsl_vector*);
 
 #endif
