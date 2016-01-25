@@ -72,8 +72,8 @@ Fixp0	Fixp1	Fixp2	Fixp3	Fixp4	Fixp5	Fixp6	Fixp7
 #include "createOutput.h"				// Output erzeugen
 
 //--Verzeichnis für Ergebnisse-------------------------------------------------------
-#define ORT "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Erste_Versuche/"
-#define ORT2 "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Erste_Versuche/"
+#define ORT "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Chain/Output_TestZuDeterministisch/Erste_Versuche/"
+#define ORT2 "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Chain/Output_TestZuDeterministisch/Erste_Versuche/"
 //++START++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 int main(int argc, char** argv)
@@ -124,8 +124,8 @@ int main(int argc, char** argv)
 		gsl_rng *rng1;   													// initialize random number generator
 		gsl_rng_env_setup();   												// ermöglicht Konsolenparameter
 		rng1_T = gsl_rng_default;   										// default random number generator (so called mt19937)
-		//gsl_rng_default_seed = 0;											// default seed for rng
-		gsl_rng_default_seed = ((unsigned)time(NULL));						// random starting seed for rng
+		gsl_rng_default_seed = 0;											// default seed for rng
+		//gsl_rng_default_seed = ((unsigned)time(NULL));						// random starting seed for rng
 		rng1 = gsl_rng_alloc(rng1_T);
 		
 		

@@ -178,9 +178,10 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
 			//--Falls Spezies überlebt----------------------------------------------------------------------------------
 			  if(y !=0)																
 			  {
+			    
 				speciesfin[0] = speciesfin[0] + 1;			// Anzahl Spezies, die überlebt
 				biomassfin[0] = biomassfin[0] + avg;		// Durchschnittliche Biomasse der Spezies wird mit berücksichtigt
-					
+				
 				if(k!=0){
 
 				speciesfin[k] = speciesfin[k] + 1;									
@@ -206,6 +207,11 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
 					  speciessatfin[k] = speciessatfin[k] + 1; 		// biomasssatfin(k) = S mit TL = k(überlebt)
 					}
 			  }
+			  else 
+			  {
+			    printf("Spezies %i auf Patch %i überlebt nicht\n",i,l);
+			  }
+			    
 			//------------------------------------------------------------------------------------------------------------
 			
 			//printf("species fin = %f\n", speciesfin[0]);

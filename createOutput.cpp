@@ -239,3 +239,35 @@ int createOutputPatchlink(struct foodweb nicheweb, struct resource res, char* ai
   return 0;
   
 }
+
+
+int createOutputBiomass(struct foodweb nicheweb, const double y[])
+{
+  FILE *Biomass;
+  char buffers5[100];
+  char aims[255] = "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Chain/Output_TestZuDeterministisch/Erste_Versuche/";
+  printf("aims ist %s\n", aims);
+  int l,i;
+  
+  sprintf(buffers5,"BiomassOfAllSpeciesS%dB%d_M%d_x%1.1fY%dd%2.1fT%d.out",nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.T);
+  printf("buffers ist %s\n", buffers5);
+  printf("alles ist %s\n", strcat(aims, buffers5));
+  Biomass = fopen(strcat(aims, buffers5),"w");	
+  printf("\n Ausgabe erstellen\n");
+  
+  for(l = 0; l< nicheweb.Y ; l++)
+  {
+    double test = 0;
+    for(i = 0; i< nicheweb.Rnum+nicheweb.S; i++)
+    {
+      fprintf(Biomass,"%5.4f\t",y[(nicheweb.Rnum+nicheweb.S)*l+i]);
+      test +=y[(nicheweb.Rnum+nicheweb.S)*l+i];
+    }
+    fprintf(Biomass, "%5.4f\t",test );
+    fprintf(Biomass,"\n");
+  }
+  
+  fclose(Biomass);
+  
+  return 0;
+}

@@ -24,6 +24,7 @@
 #include "evolveweb.h"
 #include "gillespie.h"
 #include "topology.h"
+#include "createOutput.h"
 
 #include <gsl/gsl_rng.h>					// random number generator functions
 #include <gsl/gsl_randist.h>				// random number distributions
@@ -185,7 +186,7 @@ Er wird definiert über vier Größen
       stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
       gsl_vector_set(nicheweb.migrPara, 0 , gsl_vector_get(nicheweb.migrPara, 0)+t);
       //printf("ydotmigr ist %f\n", gsl_vector_get(nicheweb.migrPara, 5));
-      //printf("mu ist %f\n", gsl_vector_get(nicheweb.migrPara, 1));
+      //printf("t+tau ist %f\n", gsl_vector_get(nicheweb.migrPara, 0));
       //printf("nu ist %f\n", gsl_vector_get(nicheweb.migrPara, 2));
       migrationEventNumber++;
     }
@@ -233,7 +234,7 @@ Er wird definiert über vier Größen
     tlast = t;
     if(t > gsl_vector_get(nicheweb.migrPara, 0)&& migrationEventNumber < Z)
     {
-      stochMigration_version2(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
+      stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
       gsl_vector_set(nicheweb.migrPara, 0 , gsl_vector_get(nicheweb.migrPara, 0)+t);
 //       printf("ydotmigr ist %f\n", gsl_vector_get(nicheweb.migrPara, 5));
       //printf("mu ist %f\n", gsl_vector_get(nicheweb.migrPara, 1));
@@ -257,15 +258,17 @@ Er wird definiert über vier Größen
 //--Zum Testen, ob im Mittel das Gleiche wie bei deterministischen Migration rauskommt; sonst auskommentieren!!!---------------------------------------------      
       if(t> tcheck )
       {
+	//printf("Im Test\n");
 	int j,k;
 	//printf("migrationEventNumber ist %i\n", migrationEventNumber);
-	
+	//printf("y ist %f\n",y[1]);
 	for(k = 0; k < migrationEventNumber; k++)
 	{
 	    //printf("stochastic.AllMus ist %f\n",gsl_vector_get(stochastic.AllMus,k));
 	    gsl_vector_set(stochastic.AllMus, k,0);
 	    gsl_vector_set(stochastic.AllNus, k,0);
 	    gsl_vector_set(stochastic.SpeciesNumbers, k,0);
+	    gsl_vector_set(stochastic.Biomass_SpeciesNumbers, k,0);
 	    //printf("stochastic.AllMus ist nachher %f\n",gsl_vector_get(stochastic.AllMus,k));
 	}
 	migrationEventNumber = 0;
@@ -276,6 +279,9 @@ Er wird definiert über vier Größen
 	  migrationEventNumber++;
 	
 	}
+	
+	createOutputBiomass(nicheweb, y);
+	
 	t = tend2;
       }
 //--Ende Test-----------------------------------------------------------------------------------------------------------------

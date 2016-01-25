@@ -7,5 +7,6 @@ int createOutputGeneral(struct foodweb nicheweb, struct resource res, char* aims
 int createOutputPatchwise(struct foodweb nicheweb, struct resource res, char* aims, gsl_vector* robustness, gsl_vector* standardDeviationAll, int L, int l);
 int createOutputSpeciesNumber(struct foodweb nicheweb, struct resource res, char* aims, double SpeciesNumber[][2], int L, double migrationEventNumber);
 int createOutputPatchlink(struct foodweb nicheweb, struct resource res, char* aims, double AllMu[][2], double AllNu[][2], int L, double migrationEventNumber);
+int createOutputBiomass(struct foodweb nicheweb, const double y[]);
 
 #endif
