@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 			return(0);		
 		 }
 
-	int length			= ((nicheweb.Rnum+nicheweb.S)*(nicheweb.S+nicheweb.Rnum)+1+nicheweb.Y*nicheweb.Y+1+(nicheweb.Rnum+nicheweb.S)+nicheweb.S);	// Länge des Rückabewerts
+	int length			= ((nicheweb.Rnum+nicheweb.S)*(nicheweb.S+nicheweb.Rnum)+1+nicheweb.Y*nicheweb.Y+1+(nicheweb.Rnum+nicheweb.S)+nicheweb.S+1);	// Länge des Rückabewerts
 	nicheweb.network = gsl_vector_calloc(length);	 
 		 
 	printf("Z = %i\n",nicheweb.Z);
@@ -213,7 +213,7 @@ int main(int argc, char** argv)
 		
 		printf("\nStarte Durchlauf L = %i\n", i);
 //--Starte Simulation-----------------------------------------------------------------------------------------------			
-		SetNicheNetwork(nicheweb, res, rng1, rng1_T, D);
+		SetNicheNetwork(nicheweb, stochastic, res, rng1, rng1_T, D);
 		gsl_vector_set_zero(resultEvolveWeb);
 		populationFIN	 = EvolveNetwork(nicheweb, stochastic, rng1, rng1_T, Dchoice, resultEvolveWeb);
 			

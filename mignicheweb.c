@@ -29,7 +29,7 @@
 /*
 Diese Funktion erstellt ein Nahrungsnetz nach dem Nischenmodell für S Spezies auf Y Lebensräumen, die über die Kopplungskonstante d verbunden sind. T gibt die Topologie an (siehe SetTopology). Rnum ist die Anzahl der Ressource(n) und Rsize die Startgröße der Ressource(n). C beschreibt die Konnektivität des Netzes, wobei CRange die erlaubte max. Abweichung von C angibt.
 */
-gsl_vector *SetNicheNetwork(struct foodweb nicheweb, struct resource res, gsl_rng* rng1, const gsl_rng_type* rng1_T, gsl_matrix* D){
+gsl_vector *SetNicheNetwork(struct foodweb nicheweb, struct migration stochastic, struct resource res, gsl_rng* rng1, const gsl_rng_type* rng1_T, gsl_matrix* D){
 
 int len			= ((nicheweb.Rnum+nicheweb.S)*(nicheweb.S+nicheweb.Rnum)+1+nicheweb.Y*nicheweb.Y+1+(nicheweb.Rnum+nicheweb.S)+nicheweb.S);	// Länge des Rückabewerts
 
@@ -114,7 +114,7 @@ while(flag == 1)
 	for(i=0; i<nicheweb.S; i++) printf("Nischenwerte: %f\n", gsl_matrix_get(NV, 0, i));	
 								// migration matrix
 
- 	LinkElements(nicheweb, NV, A, mas, D, Rsize, len);	
+ 	LinkElements(nicheweb, NV, A, mas, D, Rsize, stochastic.Bmigr, len);	
 		
  		 printf("\nNetzwerk erfolgreich erzeugt!\n");
 
@@ -386,7 +386,7 @@ for(i=0; i< Rnum; i++) gsl_matrix_set(mas, 1, i, 0);	// Ressource hat TL = 0;
 	   Rnum+S: Massen aller Spezies inkl. Ressourcen
 	        S: Trophische Level aller Spezies
 */
-gsl_vector* LinkElements(struct foodweb nicheweb, gsl_matrix* NV, gsl_matrix* A, gsl_matrix* mas, gsl_matrix* D, double Rsize, int len){
+gsl_vector* LinkElements(struct foodweb nicheweb, gsl_matrix* NV, gsl_matrix* A, gsl_matrix* mas, gsl_matrix* D, double Rsize, double Bmigr, int len){
 
 int S 	 = nicheweb.S;
 int Y 	 = nicheweb.Y;
@@ -458,6 +458,8 @@ int index 	= 0;										// Läuft die Elemente von result ab
 		printf("%3.1f\t", gsl_vector_get(nicheweb.network, index));
 		index++;
 	  }
+	  printf("Bmigr ist %f\n", Bmigr);
+	  gsl_vector_set(nicheweb.network, index, Bmigr);
 
 	printf("\nNetzwerkkomponenten zusammengesetzt. Insgesamt %i Elemente\n\n", index);
 	

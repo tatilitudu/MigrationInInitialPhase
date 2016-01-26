@@ -37,7 +37,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	double hand	= 0.35;						// handling time
 	double beta	= 0.5;						// intraspecific competition
 	double aij	= 6.0;						// attack rate
-	double migratingPop = 0.01;
+	//double migratingPop = 0.01;
 	
 	int i, j,l	= 0;						// Hilfsvariablen
 	double rowsum	= 0;	
@@ -62,7 +62,9 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	double d  	= nicheweb->d;
 	int Z 		= nicheweb->Z;
 	double dij 	= pow(10, d);
-
+	double Bmigr = gsl_vector_get(network, (Rnum+S)*(S+Rnum)+1+Y*Y+1+(Rnum+S)+S);
+	printf("Bmigr ist %f\n", Bmigr);
+	
 	double nu,mu, tau;
 	
 	int SpeciesNumber;
@@ -325,8 +327,8 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 //     
     
     
-      gsl_vector_set(d2vec,nu,migratingPop);
-      gsl_vector_set(d3vec,mu,migratingPop);
+      gsl_vector_set(d2vec,nu,Bmigr);
+      gsl_vector_set(d3vec,mu,Bmigr);
       
       
       gsl_vector_add(ydottest,d2vec);

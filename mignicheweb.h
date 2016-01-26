@@ -7,7 +7,7 @@
 #include <gsl/gsl_rng.h>				
 
 
-gsl_vector* SetNicheNetwork(struct foodweb, struct resource, gsl_rng*, const gsl_rng_type*, gsl_matrix*);
+gsl_vector* SetNicheNetwork(struct foodweb,struct migration,  struct resource, gsl_rng*, const gsl_rng_type*, gsl_matrix*);
 
 gsl_matrix* SetNicheValues(struct foodweb, double, gsl_rng*, const gsl_rng_type*, gsl_matrix*);	
 												
@@ -15,7 +15,7 @@ gsl_matrix* SetFeedingMatrix(struct foodweb, gsl_matrix*, double, double, gsl_ma
 
 gsl_matrix* SetMasses(struct foodweb, gsl_matrix*, gsl_matrix*, double, gsl_matrix*);
 
-gsl_vector* LinkElements(struct foodweb, gsl_matrix*, gsl_matrix*, gsl_matrix*, gsl_matrix*, double, int);		
+gsl_vector* LinkElements(struct foodweb, gsl_matrix*, gsl_matrix*, gsl_matrix*, gsl_matrix*, double, double, int);		
 
 int CountLinks(gsl_matrix*, int);	
 
