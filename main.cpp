@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 //--Konsoleneingabe-------------------------------------------------------------------------------------------------------------------------
 	
 	int L = 5;	// Statistik
-	int i = 0;	// Counter
+	int i = 0,j;	// Counter
 	
 	int checksum = getArgs(argc, argv, &(nicheweb.S), &(nicheweb.B), &(nicheweb.T), &(nicheweb.d), &L, &(nicheweb.Y), &(nicheweb.x), &(nicheweb.M), &(res.size), &(nicheweb.Z));	
 
@@ -111,12 +111,12 @@ int main(int argc, char** argv)
 		 
 	printf("Z = %i\n",nicheweb.Z);
 	nicheweb.migrPara = gsl_vector_calloc(7); // Reihenfolge: tau, mu, nu, SpeciesNumber, momentanes t, ymigr, migrationEventNumber	 
-	stochastic.SpeciesNumbers = gsl_vector_calloc(L*nicheweb.Z);
-	stochastic.AllMus = gsl_vector_calloc(nicheweb.Z);
-	stochastic.AllNus = gsl_vector_calloc(nicheweb.Z);
-	stochastic.Biomass_SpeciesNumbers = gsl_vector_calloc(nicheweb.Z);
-	stochastic.Biomass_AllMus = gsl_vector_calloc(nicheweb.Z);
-	stochastic.Biomass_AllNus = gsl_vector_calloc(nicheweb.Z);
+// 	stochastic.SpeciesNumbers = gsl_vector_calloc(nicheweb.Z);
+// 	stochastic.AllMus = gsl_vector_calloc(nicheweb.Z);
+// 	stochastic.AllNus = gsl_vector_calloc(nicheweb.Z);
+// 	stochastic.Biomass_SpeciesNumbers = gsl_vector_calloc(nicheweb.Z);
+// 	stochastic.Biomass_AllMus = gsl_vector_calloc(nicheweb.Z);
+// 	stochastic.Biomass_AllNus = gsl_vector_calloc(nicheweb.Z);
 	
 //--Zufallszahlengenerator initialisieren--------------------------------------------------------------------------------
 
@@ -124,8 +124,8 @@ int main(int argc, char** argv)
 		gsl_rng *rng1;   													// initialize random number generator
 		gsl_rng_env_setup();   												// ermöglicht Konsolenparameter
 		rng1_T = gsl_rng_default;   										// default random number generator (so called mt19937)
-		gsl_rng_default_seed = 0;											// default seed for rng
-		//gsl_rng_default_seed = ((unsigned)time(NULL));						// random starting seed for rng
+		//gsl_rng_default_seed = 0;											// default seed for rng
+		gsl_rng_default_seed = ((unsigned)time(NULL));						// random starting seed for rng
 		rng1 = gsl_rng_alloc(rng1_T);
 		
 		
@@ -181,9 +181,9 @@ int main(int argc, char** argv)
 	gsl_vector_set_zero(nicheweb.migrPara);
 	gsl_vector_set_zero(meanSquOfDataAll);
 	
-	double SpeciesNumber[L*nicheweb.Z][2]; 
-	double AllMu[L*nicheweb.Z][2];
-	double AllNu[L*nicheweb.Z][2];
+// 	double SpeciesNumber[L*nicheweb.Z][2]; 
+// 	double AllMu[L*nicheweb.Z][2];
+// 	double AllNu[L*nicheweb.Z][2];
 	
 	double ymigr = 0;
 	double mu = 0;
@@ -198,8 +198,17 @@ int main(int argc, char** argv)
 	int lastMigrationEventNumber = 0;
 
 //--Simulation---------------------------------------------------------------------------------------------------------------------
-	D    = SetTopology(nicheweb.Y, nicheweb.T, D);	
-	Dchoice    = SetTopology(nicheweb.Y, nicheweb.Tchoice, Dchoice);
+	//SetTopology(nicheweb.Y, nicheweb.T, D);	
+	SetTopology(nicheweb.Y, nicheweb.Tchoice, Dchoice);	
+	for(i = 0; i<nicheweb.Y; i++)
+	{
+	  for(j = 0 ; j<nicheweb.Y; j++)
+	  {
+	    printf("%f\t",gsl_matrix_get(Dchoice,i,j));
+	  }
+	  printf("\n");
+	}
+
 	for(i = 0; i < L; i++)																							
 	 { 	
 // 		const gsl_rng_type *rng1_T;											// ****
@@ -228,16 +237,16 @@ int main(int argc, char** argv)
 //--Ausgabewerte----------------------------------------------------------------------------------------------------------		
 		ymigrtemp = gsl_vector_get(nicheweb.migrPara, 5);
 		migrationEventNumbertemp = gsl_vector_get(nicheweb.migrPara, 6);
-		for(int j= 0; j<migrationEventNumbertemp; j++)
-		{
-		  AllMu[lastMigrationEventNumber+j][0] = gsl_vector_get(stochastic.AllMus, j);
-		  AllNu[lastMigrationEventNumber+j][0] = gsl_vector_get(stochastic.AllNus, j);
-		  SpeciesNumber[lastMigrationEventNumber+j][0] = gsl_vector_get(stochastic.SpeciesNumbers,j);
-		  
-		  AllMu[lastMigrationEventNumber+j][1] = gsl_vector_get(stochastic.Biomass_AllMus, j);
-		  AllNu[lastMigrationEventNumber+j][1] = gsl_vector_get(stochastic.Biomass_AllNus, j);
-		  SpeciesNumber[lastMigrationEventNumber+j][1] = gsl_vector_get(stochastic.Biomass_SpeciesNumbers,j);
-		}
+// 		for(int j= 0; j<migrationEventNumbertemp; j++)
+// 		{
+// 		  AllMu[lastMigrationEventNumber+j][0] = gsl_vector_get(stochastic.AllMus, j);
+// 		  AllNu[lastMigrationEventNumber+j][0] = gsl_vector_get(stochastic.AllNus, j);
+// 		  SpeciesNumber[lastMigrationEventNumber+j][0] = gsl_vector_get(stochastic.SpeciesNumbers,j);
+// 		  
+// 		  AllMu[lastMigrationEventNumber+j][1] = gsl_vector_get(stochastic.Biomass_AllMus, j);
+// 		  AllNu[lastMigrationEventNumber+j][1] = gsl_vector_get(stochastic.Biomass_AllNus, j);
+// 		  SpeciesNumber[lastMigrationEventNumber+j][1] = gsl_vector_get(stochastic.Biomass_SpeciesNumbers,j);
+// 		}
 		lastMigrationEventNumber += migrationEventNumbertemp;
 		
 		//printf("SpeciesNumber ist %f\n",SpeciesNumber[i]);
@@ -307,21 +316,21 @@ int main(int argc, char** argv)
        
       }
       
-      if(nicheweb.Tchoice != 0)
-      {
+//       if(nicheweb.Tchoice != 0)
+//       {
 //--Ausgewählte Spezies rausschreiben, die migrieren darf---------------------------------------------------------------------------
 	
-	char aims3[255] = ORT;
-	
-	createOutputSpeciesNumber(nicheweb, res, aims3, SpeciesNumber, L, migrationEventNumber);
-
-      
-//--Ausgewählte Verbindung rausschreiben, über die migriert werden darf---------------------------------------------------------------------------
-	
-	char aims4[255] = ORT;
-	
-	createOutputPatchlink(nicheweb, res, aims4, AllMu, AllNu, L, migrationEventNumber);
-      }
+// 	char aims3[255] = ORT;
+// 	
+// 	//createOutputSpeciesNumber(nicheweb, res, aims3, SpeciesNumber, L, migrationEventNumber);
+// 
+//       
+// //--Ausgewählte Verbindung rausschreiben, über die migriert werden darf---------------------------------------------------------------------------
+// 	
+// 	char aims4[255] = ORT;
+// 	
+// // 	createOutputPatchlink(nicheweb, res, aims4, AllMu, AllNu, L, migrationEventNumber);
+//       }
       
       printf("\nSimulation abgespeichert\n\n");
 	
@@ -342,12 +351,12 @@ int main(int argc, char** argv)
 	
 
 	gsl_vector_free(nicheweb.migrPara);
-	gsl_vector_free(stochastic.AllMus);
-	gsl_vector_free(stochastic.AllNus);
-	gsl_vector_free(stochastic.SpeciesNumbers);
-	gsl_vector_free(stochastic.Biomass_AllMus);
-	gsl_vector_free(stochastic.Biomass_AllNus);
-	gsl_vector_free(stochastic.Biomass_SpeciesNumbers);
+// 	gsl_vector_free(stochastic.AllMus);
+// 	gsl_vector_free(stochastic.AllNus);
+// 	gsl_vector_free(stochastic.SpeciesNumbers);
+// 	gsl_vector_free(stochastic.Biomass_AllMus);
+// 	gsl_vector_free(stochastic.Biomass_AllNus);
+// 	gsl_vector_free(stochastic.Biomass_SpeciesNumbers);
 	gsl_vector_free(populationFIN);
 	gsl_vector_free(robustness);	
 	gsl_vector_free(meanOfData);

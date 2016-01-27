@@ -207,10 +207,10 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
 					  speciessatfin[k] = speciessatfin[k] + 1; 		// biomasssatfin(k) = S mit TL = k(überlebt)
 					}
 			  }
-			  else 
-			  {
-			    printf("Spezies %i auf Patch %i überlebt nicht\n",i,l);
-			  }
+// 			  else 
+// 			  {
+// 			    printf("Spezies %i auf Patch %i überlebt nicht\n",i,l);
+// 			  }
 			    
 			//------------------------------------------------------------------------------------------------------------
 			

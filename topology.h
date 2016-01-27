@@ -3,6 +3,6 @@
 
 #include <gsl/gsl_matrix.h>
 
-gsl_matrix *SetTopology(int, int, gsl_matrix*);
+int SetTopology(int, int, gsl_matrix*);
 
 #endif

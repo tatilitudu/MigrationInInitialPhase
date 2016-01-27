@@ -42,8 +42,8 @@ gsl_vector* EvolveNetwork(struct foodweb nicheweb, struct migration stochastic, 
 	int Y 	     	= nicheweb.Y;
 	int Rnum 	= nicheweb.Rnum;
 	int Z 		= nicheweb.Z;
-	int Tchoice 	= nicheweb.Tchoice;
-	double tcheck	= 7805; 
+	//int Tchoice 	= nicheweb.Tchoice;
+	//double tcheck	= 7805; 
 	
 	double Rsize = gsl_vector_get(nicheweb.network, (Rnum+S)*(Rnum+S)+Y*Y+2);
 		
@@ -131,9 +131,9 @@ Er wird definiert über vier Größen
   double h		= 1e-5;				// stepwidth
 
   double countsteps = 0;			// Schritte
-  double mu=0, nu=0, tau = 0;
+  //double mu=0, nu=0, tau = 0;
   double tlast = tend1;
-  int SpeciesNumber;
+  //int SpeciesNumber;
   int migrationEventNumber = 0;
   
   //printf("Z ist %i\n",Z);
@@ -242,7 +242,7 @@ Er wird definiert über vier Größen
       migrationEventNumber++;
     }
     
-    
+    //printf("Migrationsereignis #%i\n",migrationEventNumber);
     for(i=0; i<(Rnum+S)*Y; i++)
       {
 		  if(y[i] > gsl_vector_get(ymax, i))				// Checken ob y größer geworden ist
@@ -256,34 +256,34 @@ Er wird definiert über vier Größen
       
       
 //--Zum Testen, ob im Mittel das Gleiche wie bei deterministischen Migration rauskommt; sonst auskommentieren!!!---------------------------------------------      
-      if(t> tcheck )
-      {
-	//printf("Im Test\n");
-	int j,k;
-	//printf("migrationEventNumber ist %i\n", migrationEventNumber);
-	//printf("y ist %f\n",y[1]);
-	for(k = 0; k < migrationEventNumber; k++)
-	{
-	    //printf("stochastic.AllMus ist %f\n",gsl_vector_get(stochastic.AllMus,k));
-	    gsl_vector_set(stochastic.AllMus, k,0);
-	    gsl_vector_set(stochastic.AllNus, k,0);
-	    gsl_vector_set(stochastic.SpeciesNumbers, k,0);
-	    gsl_vector_set(stochastic.Biomass_SpeciesNumbers, k,0);
-	    //printf("stochastic.AllMus ist nachher %f\n",gsl_vector_get(stochastic.AllMus,k));
-	}
-	migrationEventNumber = 0;
-	for(j = 0 ; j < Z; j++)
-	{
-	  
-	  stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
-	  migrationEventNumber++;
-	
-	}
-	
-	createOutputBiomass(nicheweb, y);
-	
-	t = tend2;
-      }
+//       if(t> tcheck )
+//       {
+// 	//printf("Im Test\n");
+// 	int j,k;
+// 	//printf("migrationEventNumber ist %i\n", migrationEventNumber);
+// 	//printf("y ist %f\n",y[1]);
+// 	for(k = 0; k < migrationEventNumber; k++)
+// 	{
+// 	    //printf("stochastic.AllMus ist %f\n",gsl_vector_get(stochastic.AllMus,k));
+// 	    gsl_vector_set(stochastic.AllMus, k,0);
+// 	    gsl_vector_set(stochastic.AllNus, k,0);
+// 	    gsl_vector_set(stochastic.SpeciesNumbers, k,0);
+// 	    gsl_vector_set(stochastic.Biomass_SpeciesNumbers, k,0);
+// 	    //printf("stochastic.AllMus ist nachher %f\n",gsl_vector_get(stochastic.AllMus,k));
+// 	}
+// 	migrationEventNumber = 0;
+// 	for(j = 0 ; j < Z; j++)
+// 	{
+// 	  
+// 	  stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
+// 	  migrationEventNumber++;
+// 	
+// 	}
+// 	
+// 	createOutputBiomass(nicheweb, y);
+// 	
+// 	t = tend2;
+//      }
 //--Ende Test-----------------------------------------------------------------------------------------------------------------
 	// if(status == GSL_SUCCESS)	printf("Status OK\n");
 

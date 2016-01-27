@@ -81,7 +81,7 @@ while(flag == 1)
 		flag = 1;
 		continue;
 	}
-
+	//printf("CON ist %f\n", CON);
 	int bcount = 0;
 	for(i = nicheweb.Rnum; i< (nicheweb.S + nicheweb.Rnum); i++)
 	{
@@ -478,9 +478,9 @@ int i, j = 0;
 int linkCount = 0;
 
 
-	for(i = 0; i < Dim; i++)
+	for(i = Rnum; i < Dim; i++)
 	{
-		for(j = 0; j < Dim; j++)
+		for(j = Rnum; j < Dim; j++)
 		{
 			if(gsl_matrix_get(A, i, j) != 0 )
 			linkCount++;

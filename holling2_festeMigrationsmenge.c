@@ -41,7 +41,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	
 	int i, j,l	= 0;						// Hilfsvariablen
 	double rowsum	= 0;	
-	double colsum	= 0;		  
+	//double colsum	= 0;		  
 
 // 	int test = 0;
 // 	
@@ -59,11 +59,11 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	int S 	 	= nicheweb->S;
 	int Y 	 	= nicheweb->Y;
 	int Rnum	= nicheweb->Rnum;
-	double d  	= nicheweb->d;
+	//double d  	= nicheweb->d;
 	int Z 		= nicheweb->Z;
-	double dij 	= pow(10, d);
+	//double dij 	= pow(10, d);
 	double Bmigr = gsl_vector_get(network, (Rnum+S)*(S+Rnum)+1+Y*Y+1+(Rnum+S)+S);
-	printf("Bmigr ist %f\n", Bmigr);
+	//printf("Bmigr ist %f\n", Bmigr);
 	
 	double nu,mu, tau;
 	
@@ -113,7 +113,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	    //printf("Setze Link für gewünschte Migration\n");
 	    //printf("t oben %f\n",t);
 	    gsl_matrix_set(EDmat, nu, mu, 1.);
-	    int m;
+	    //int m;
 // 	    for(l = 0; l< Y;l++)
 // 	    {
 // 		for(m=0;m<Y;m++)
@@ -277,7 +277,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
   double max = gsl_matrix_max(EDmat); 
   for(l = Rnum; l< Rnum+S; l++)								// start of migration solving
   {
-    if(l == SpeciesNumber+Rnum && max !=0)
+    if(l == SpeciesNumber+Rnum && max !=0 )
     {
       //printf("max ist %f\n",max);
       //printf("l ist %i\n",l);

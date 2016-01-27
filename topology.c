@@ -18,7 +18,7 @@ Mögliche Verbindungsmuster sind
 #include <stdlib.h>					// standard
 #include <gsl/gsl_vector.h>
 
-gsl_matrix *SetTopology(int Y, int T, gsl_matrix* D){
+int SetTopology(int Y, int T, gsl_matrix* D){
 
 int i = 0;
 
@@ -104,7 +104,7 @@ gsl_matrix_set(D, 0, i, 1.);
 				
 	}
 
-  return D;
+  return 0;
 
 }
 
