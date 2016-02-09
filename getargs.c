@@ -34,7 +34,7 @@
 #include <stdio.h>						// output functions
 #include <stdlib.h>						// standard
 
-int getArgs(int argc, char** argv, int* S_value, int* B_value, int* T_value, double* d_value, int* L_value, int* Y_value, double* x_value, int* M_value, double* R_value, int* Z_value)
+int getArgs(int argc, char** argv, int* S_value, int* B_value, int* T_value, double* d_value, int* L_value, int* Y_value, double* x_value, int* M_value, double* R_value, int* Z_value, double* A_value)
 {
   int i = 0;
 
@@ -49,6 +49,7 @@ int getArgs(int argc, char** argv, int* S_value, int* B_value, int* T_value, dou
   int M_check	= 0;
   int R_check 	= 0;
   int Z_check 	= 0;
+  int A_check 	= 0;
 
   int checksum	= 0;		// Wird am Ende ausgegeben
 
@@ -115,7 +116,11 @@ int getArgs(int argc, char** argv, int* S_value, int* B_value, int* T_value, dou
 					printf("Es wird zu %i Zeitpunkten migriert \n", *Z_value);
 					break;
 	
-
+		case 'A':	*A_value = atof(argv[++i]);
+					A_check  = 1;
+					printf("Eine Migrationseinheit ist %f \n", *A_value);
+					break;
+					
 
 		default:	fprintf(stderr,"Unknown switch: %s\n", argv[i]); // unbekannter Parametername -> Fehler in Konsole
       }
@@ -132,8 +137,9 @@ int getArgs(int argc, char** argv, int* S_value, int* B_value, int* T_value, dou
     if (M_check == 0) printf("Missing switch: -M\n");
     if (R_check == 0) printf("Missing switch: -R\n");
     if (Z_check == 0) printf("Missing switch: -Z\n");
+    if (A_check == 0) printf("Missing switch: -A\n");
     
-    checksum = S_check + B_check + T_check + d_check + L_check + Y_check + x_check + M_check + R_check + Z_check;
+    checksum = S_check + B_check + T_check + d_check + L_check + Y_check + x_check + M_check + R_check + Z_check + A_check;
 	
 	printf("checksum ist %i \n", checksum);
     

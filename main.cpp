@@ -65,15 +65,15 @@ Fixp0	Fixp1	Fixp2	Fixp3	Fixp4	Fixp5	Fixp6	Fixp7
 #include "getargs.h"					// getArgs
 #include "topology.h"					// SetTopology
 #include "mignicheweb.h"				// SetNicheNetwork, LinkElements, CountLinks
-#include "evolveweb.h"					// DGL lösen
-#include "holling2.h"					// DGL lösen			
+#include "evolveweb_neu.h"					// DGL lösen
+#include "holling2_festeMigrmenge_neu.h"					// DGL lösen			
 #include "robustness.h"					// Robustness Analyse
 #include "StandardDeviation.h"				// Standardabweichung berechnen
 #include "createOutput.h"				// Output erzeugen
 
 //--Verzeichnis für Ergebnisse-------------------------------------------------------
-#define ORT "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Chain/Output_TestZuDeterministisch/Erste_Versuche/"
-#define ORT2 "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Chain/Output_TestZuDeterministisch/Erste_Versuche/"
+#define ORT "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Erste_Versuche/"
+#define ORT2 "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Erste_Versuche/"
 //++START++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 int main(int argc, char** argv)
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 
 	struct foodweb nicheweb	= {NULL, fixpunkte, NULL, 18, 3, 1, 5, 0, 0, -7., 0.0, 0, 1};		// Reihenfolge: network, fxpkt, migrPara, AllMus, AllNus, S, B, Rnum, Y, T, Tchoice, d, x, M, Z
 	
-	struct migration stochastic = {NULL, NULL, NULL, NULL, NULL, NULL, 0.01};
+	struct migration stochastic = {NULL, NULL, NULL, NULL, NULL, NULL, 0.00001};
 	
 	struct resource res = {500.0, 0.0};											// Resource: Größe, Wachstum
 	
@@ -98,9 +98,9 @@ int main(int argc, char** argv)
 	int L = 5;	// Statistik
 	int i = 0,j;	// Counter
 	
-	int checksum = getArgs(argc, argv, &(nicheweb.S), &(nicheweb.B), &(nicheweb.T), &(nicheweb.d), &L, &(nicheweb.Y), &(nicheweb.x), &(nicheweb.M), &(res.size), &(nicheweb.Z));	
+	int checksum = getArgs(argc, argv, &(nicheweb.S), &(nicheweb.B), &(nicheweb.T), &(nicheweb.d), &L, &(nicheweb.Y), &(nicheweb.x), &(nicheweb.M), &(res.size), &(nicheweb.Z), &(stochastic.Bmigr));	
 
-		if (checksum != 10 && checksum!=(int)(argc-1)/2) 	// Alles gesetzt?									
+		if (checksum != 11 && checksum!=(int)(argc-1)/2) 	// Alles gesetzt?									
 		 {	
 			printf("Bitte gültige Eingabe für Parameter machen!\nProgramm wird beendet.\n");		
 			return(0);		
@@ -154,6 +154,9 @@ int main(int argc, char** argv)
 	nicheweb.d = nicheweb.d/10;
 	printf("d ist %f\n",nicheweb.d);
 	res.size = res.size/10;
+	stochastic.Bmigr = pow(10,stochastic.Bmigr);
+	printf("Bmigr ist %f\n",stochastic.Bmigr);
+	printf("x ist %f\n",nicheweb.x);
 	//int len	= ((nicheweb.Rnum+nicheweb.S)*(nicheweb.S+nicheweb.Rnum)+1+nicheweb.Y*nicheweb.Y+1+(nicheweb.Rnum+nicheweb.S)+nicheweb.S);	// Länge des Rückabewerts
 
 	gsl_vector *populationFIN 	= gsl_vector_calloc((nicheweb.Rnum + nicheweb.S)*(nicheweb.Y)*5 + (nicheweb.S) + 3);				// Gleiche Länge wie Rückgabe von evolveNetwork
@@ -200,14 +203,14 @@ int main(int argc, char** argv)
 //--Simulation---------------------------------------------------------------------------------------------------------------------
 	//SetTopology(nicheweb.Y, nicheweb.T, D);	
 	SetTopology(nicheweb.Y, nicheweb.Tchoice, Dchoice);	
-	for(i = 0; i<nicheweb.Y; i++)
-	{
-	  for(j = 0 ; j<nicheweb.Y; j++)
-	  {
-	    printf("%f\t",gsl_matrix_get(Dchoice,i,j));
-	  }
-	  printf("\n");
-	}
+// 	for(i = 0; i<nicheweb.Y; i++)
+// 	{
+// 	  for(j = 0 ; j<nicheweb.Y; j++)
+// 	  {
+// 	    printf("%f\t",gsl_matrix_get(Dchoice,i,j));
+// 	  }
+// 	  printf("\n");
+// 	}
 
 	for(i = 0; i < L; i++)																							
 	 { 	
@@ -299,7 +302,7 @@ int main(int argc, char** argv)
 	char aims[255] = ORT;
 
 	
-	createOutputGeneral(nicheweb, res, aims, robustness, standardDeviationAll, L, mu, nu, ymigr, ymigrDeviation, migrationEventNumber, migrationEventNumberDeviation);													// Datei schließen
+	createOutputGeneral(nicheweb, res, stochastic, aims, robustness, standardDeviationAll, L, mu, nu, ymigr, ymigrDeviation, migrationEventNumber, migrationEventNumberDeviation);													// Datei schließen
 
 	
     
@@ -312,7 +315,7 @@ int main(int argc, char** argv)
        //char name[100];
        char aims2[255] = ORT2;
        
-       createOutputPatchwise(nicheweb, res, aims2, meanOfData, standardDeviation, L, l);
+       createOutputPatchwise(nicheweb, res, stochastic, aims2, meanOfData, standardDeviation, L, l);
        
       }
       

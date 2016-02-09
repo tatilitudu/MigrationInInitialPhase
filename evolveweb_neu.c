@@ -23,6 +23,7 @@
 #include "holling2_festeMigrmenge_neu.h"
 #include "evolveweb_neu.h"
 #include "gillespie.h"
+#include "topology.h"
 #include "createOutput.h"
 
 #include <gsl/gsl_rng.h>					// random number generator functions
@@ -41,14 +42,15 @@ gsl_vector* EvolveNetwork(struct foodweb nicheweb, struct migration stochastic, 
 	int Y 	     	= nicheweb.Y;
 	int Rnum 	= nicheweb.Rnum;
 	int Z 		= nicheweb.Z;
+	double Bmigr 	= stochastic.Bmigr;
+	printf("Bmigr ist %f\n", Bmigr);
 	//int Tchoice 	= nicheweb.Tchoice;
 	//double tcheck	= 7805; 
-	
+	double aussterbeSchwelle = stochastic.Bmigr;
 	double Rsize = gsl_vector_get(nicheweb.network, (Rnum+S)*(Rnum+S)+Y*Y+2);
 		
 	double *y 	 = (double *)calloc((Rnum+S)*Y, sizeof(double));				// Ergebnis Array für den Lösungsalgorithmus
 
-	double aussterbeSchwelle = stochastic.Bmigr;
 	int i, j   	 = 0;	
 	int closezero= 1;			
 
@@ -132,10 +134,11 @@ Er wird definiert über vier Größen
 
   double countsteps = 0;			// Schritte
   //double mu=0, nu=0, tau = 0;
-  double tlast = tend1;
+  double tlast = -0.1;
   //int SpeciesNumber;
   int migrationEventNumber = 0;
-  
+  gsl_vector_set(nicheweb.migrPara,5, 0);
+  double taulast = 0;
   //printf("Z ist %i\n",Z);
 //  int docheck 		= 0;			
 
@@ -160,20 +163,30 @@ Er wird definiert über vier Größen
   { 
     gsl_vector_set(nicheweb.migrPara, 4,tlast);	
 	//for(i=0; i<Rnum+S; i++)// Startgrößen
-    ytest= y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 2)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)];	
+    
 	//printf("mu ist %f\n", gsl_vector_get(nicheweb.migrPara, 1));
       //printf("nu ist %f\n", gsl_vector_get(nicheweb.migrPara, 2));	
-    int status = gsl_odeiv_evolve_apply(e, c, s, &sys, &t, tend1, &h, y);	 			
-	/*status = Ergebnis für einen Zeitschritt der DGL Lösung. 
-	  HollingII wird mit t, y, params, aufgerufen, die Ergebnisse legt es dann in ydot ab. 
-	  Die Werte in ydot werden dann als neue Werte für y verwendet.*/
-	
-	//	if(status == GSL_SUCCESS)	printf("Status OK\n");
-
+    int status = gsl_odeiv_evolve_apply(e, c, s, &sys, &t, tend1, &h, y);
     if(status != GSL_SUCCESS) {
 		printf("Fehler beim Lösen der DGL!\n");		
 		break;
-	   }
+	   }	
+  /*status = Ergebnis für einen Zeitschritt der DGL Lösung. 
+	  HollingII wird mit t, y, params, aufgerufen, die Ergebnisse legt es dann in ydot ab. 
+	  Die Werte in ydot werden dann als neue Werte für y verwendet.*/
+    ytest= y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 2)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)];	
+	//	if(status == GSL_SUCCESS)	printf("Status OK\n");
+    if( (t > gsl_vector_get(nicheweb.migrPara, 0)) && (tlast < gsl_vector_get(nicheweb.migrPara, 0)))
+    {
+      
+      y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 2)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)] = y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 2)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)]+Bmigr; 
+      y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 1)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)] = y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 1)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)]-Bmigr; 
+      gsl_vector_set(nicheweb.migrPara,5, gsl_vector_get(nicheweb.migrPara,5)+Bmigr);
+      //printf("tlast ist %f und t ist %f\n", tlast,t);
+      
+    }
+
+
 
     for(i=0; i<(Rnum+S)*Y; i++)
      {
@@ -185,16 +198,17 @@ Er wird definiert über vier Größen
     tlast = t;
     if(t > gsl_vector_get(nicheweb.migrPara, 0)&& migrationEventNumber < Z)
     {
-      printf("y vorher ist %f\t und nachher %f\n",ytest, y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 2)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)]);
+      taulast = gsl_vector_get(nicheweb.migrPara, 0);
+      //printf("y vorher ist %f\t und nachher %f\n",ytest, y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 2)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)]);
       stochMigration(nicheweb, stochastic, y, rng1, rng1_T, migrationEventNumber, Dchoice);
       
       gsl_vector_set(nicheweb.migrPara, 0 , gsl_vector_get(nicheweb.migrPara, 0)+t);
-      printf("tau+t ist %f\n", gsl_vector_get(nicheweb.migrPara, 0));
+      //printf("tau+t ist %f\n", gsl_vector_get(nicheweb.migrPara, 0));
       //printf("ydotmigr ist %f\n", gsl_vector_get(nicheweb.migrPara, 5));
       //printf("t+tau ist %f\n", gsl_vector_get(nicheweb.migrPara, 0));
       //printf("nu ist %f\n", gsl_vector_get(nicheweb.migrPara, 2));
       migrationEventNumber++;
-      printf("migrationEventNumber ist %i\n",migrationEventNumber);
+      //printf("migrationEventNumber ist %i\n",migrationEventNumber);
 //       if(migrationEventNumber!=0.00001*gsl_vector_get(nicheweb.migrPara,5))
 //       {
 // 	int k;
@@ -235,7 +249,14 @@ Er wird definiert über vier Größen
 
     if(status != GSL_SUCCESS)
       break;
-
+    
+    if( (t > gsl_vector_get(nicheweb.migrPara, 0)) && (tlast < gsl_vector_get(nicheweb.migrPara, 0)))
+    {
+      y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 2)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)] = y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 2)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)]+Bmigr; 
+      y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 1)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)] = y[(Rnum+S)*(int)gsl_vector_get(nicheweb.migrPara, 1)+Rnum+(int)gsl_vector_get(nicheweb.migrPara, 3)]-Bmigr; 
+      gsl_vector_set(nicheweb.migrPara,5, gsl_vector_get(nicheweb.migrPara,5)+Bmigr);
+      
+    }
     
     
     for(i=0; i<(Rnum+S)*Y; i++)

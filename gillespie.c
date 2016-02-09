@@ -13,7 +13,6 @@
 #include <gsl/gsl_vector.h>
 
 #include "gillespie.h"
-#include "topology.h"
 
 #define SEED	123
 
@@ -126,7 +125,6 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
       //r1  = (double)rand()/INT_MAX;
       //printf("r1 ist %f\n",r1);
       nu = select_patch_random(nicheweb, rng1);
-      
       if(nu!= mu  && gsl_matrix_get(Dchoice, nu, mu)!=0)
       {
 	gsl_vector_set(nicheweb.migrPara, 2, nu);
@@ -170,16 +168,16 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
 
 double choose_time(double atot, gsl_rng* rng1)
 {
-  double tau;
+  double tau = 0;
   double r = gsl_rng_uniform_pos(rng1);
   //printf("Zufallszahl ist %f\n",r);
   //printf("atot ist %f\n",atot);
   if( atot>0 )
   {
+    
     // rand liefert zufällige Zahl zwischen 0 und INT_MAX
     tau = -log(r)/ atot;
   }
-  //printf("tau: %f\t",tau);
     
   return tau;
 }
@@ -230,7 +228,13 @@ int select_patch_random(struct foodweb nicheweb, gsl_rng* rng1)
 //   printf("patchNumberFloat ist %f\n", patchNumberFloat);
   
   patchNumber = (int)patchNumberFloat;
-  
+  if(patchNumber>3)
+  {
+    patchNumber = 3;
+    printf("nu ist %i\n",patchNumber);
+    printf("patchNumberFloat ist %f\n",patchNumberFloat);
+    printf("Zufallszahl ist %f\n", r);
+  }
 //   if(patchNumberFloat>0) patchNumber = (int)(patchNumberFloat + 0.5);
 // 	
 //   else patchNumber =  (int)(patchNumberFloat - 0.5);

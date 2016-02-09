@@ -17,6 +17,6 @@ gsl_matrix* SetMasses(struct foodweb, gsl_matrix*, gsl_matrix*, double, gsl_matr
 
 gsl_vector* LinkElements(struct foodweb, gsl_matrix*, gsl_matrix*, gsl_matrix*, gsl_matrix*, double, double, int);		
 
-int CountLinks(gsl_matrix*, int);	
+int CountLinks(gsl_matrix*, int, int);	
 
 #endif

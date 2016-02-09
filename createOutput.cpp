@@ -16,7 +16,7 @@
 
 
 
-int createOutputGeneral(struct foodweb nicheweb, struct resource res, char* aims, gsl_vector* robustness, gsl_vector* standardDeviationAll, int L, double mu, double nu, double ymigr, double ymigrDeviation, double migrationEventNumber, double migrationEventNumberDeviation)
+int createOutputGeneral(struct foodweb nicheweb, struct resource res, struct migration stochastic, char* aims, gsl_vector* robustness, gsl_vector* standardDeviationAll, int L, double mu, double nu, double ymigr, double ymigrDeviation, double migrationEventNumber, double migrationEventNumberDeviation)
 {
   int i;
   FILE *statistics;
@@ -25,7 +25,7 @@ int createOutputGeneral(struct foodweb nicheweb, struct resource res, char* aims
 
     char buffers[100];				// Speicher für Dateiname
 
-    sprintf(buffers,"S%dB%d_M%d_x%1.1fY%dd%2.1fT%dL%dRSize%3.1f.out",nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice,L,res.size);		
+    sprintf(buffers,"S%dB%d_M%d_x%1.1fY%dd%2.1fT%dL%dRSize%3.1fBmigr%3.5f.out",nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice,L,res.size, stochastic.Bmigr);		
 	// sprintf: schreibt eine Zeichenkette in den Speicherbereich von buffers
 
     statistics = fopen(strcat(aims, buffers),"w");											// strcat: klebt zwei Strings aneinander (buffers an aims) -> Pfad+Name
@@ -59,7 +59,7 @@ int createOutputGeneral(struct foodweb nicheweb, struct resource res, char* aims
       }
 
       /* ymigr wurde oben schon durch L geteilt */
-      fprintf(statistics,"%7.1f\t\t", ymigr);
+      fprintf(statistics,"%7.5f\t\t", ymigr);
       fprintf(statistics, "%5.2f\t",mu/L);
       fprintf(statistics, "%5.2f\t",nu/L);
       fprintf(statistics, "%d\t",nicheweb.Tchoice);
@@ -80,7 +80,7 @@ int createOutputGeneral(struct foodweb nicheweb, struct resource res, char* aims
       fprintf(statistics, "%5.3f\t",gsl_vector_get(standardDeviationAll,i));
     }
     
-    fprintf(statistics,"%7.1f\t\t", ymigrDeviation);
+    fprintf(statistics,"%7.3f\t\t", ymigrDeviation);
     fprintf(statistics, "%d\t",0);
     fprintf(statistics, "%d\t",0);
     fprintf(statistics, "%d\t",0);
@@ -94,14 +94,14 @@ int createOutputGeneral(struct foodweb nicheweb, struct resource res, char* aims
 }
 
 
-int createOutputPatchwise(struct foodweb nicheweb, struct resource res, char* aims, gsl_vector* meanOfData, gsl_vector* standardDeviation, int L, int l)
+int createOutputPatchwise(struct foodweb nicheweb, struct resource res, struct migration stochastic, char* aims, gsl_vector* meanOfData, gsl_vector* standardDeviation, int L, int l)
 {
   int i;
   char name[100];
   
   FILE *statForPatchl;
   
-  sprintf(name,"Patch_l%dS%dB%d_M%d_x%1.1fY%dd%2.1fT%dL%dRSize%3.1f.out",l,nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice,L,res.size);		
+  sprintf(name,"Patch_l%dS%dB%d_M%d_x%1.1fY%dd%2.1fT%dL%dRSize%3.1fBmigr%3.5f.out",l,nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice,L,res.size, stochastic.Bmigr);		
   // sprintf: schreibt eine Zeichenkette in den Speicherbereich von buffers
   
   statForPatchl = fopen(strcat(aims, name),"w");											// strcat: klebt zwei Strings aneinander (buffers an aims) -> Pfad+Name

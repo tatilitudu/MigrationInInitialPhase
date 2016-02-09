@@ -6,14 +6,14 @@
  
 		Inhalt: 	HollingII(double t, const double y[], double ydot[], void *params)
 
-	Zugehöriger header: holling2.h
+	Zugehöriger header: holling2_festeMigrmenge_neu.h
 
 	Diese Funktion berechnet eine Populationsdynamik mit der Holling Typ II Form. 
 	Die Reihenfolge und Datentypen der Paramter sind vorgegeben durch den ODE Solver aus der Funktion EvolveNetwork. 
 	Die Ergebnisse der Berechnung liegen in ydot, diese werden vom Solver an das rufende Programm übergeben, sodass Holling2 selbst nichts zurück gibt.
 */
 #include "structs.h"
-#include "holling2.h"
+#include "holling2_festeMigrmenge_neu.h"
 
 #include <string.h>						// string modification functions
 #include <time.h>						// time functions
@@ -60,27 +60,27 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	int Y 	 	= nicheweb->Y;
 	int Rnum	= nicheweb->Rnum;
 	//double d  	= nicheweb->d;
-	int Z 		= nicheweb->Z;
-	//double dij 	= pow(10, d);
-	double Bmigr = gsl_vector_get(network, (Rnum+S)*(S+Rnum)+1+Y*Y+1+(Rnum+S)+S);
-	//printf("Bmigr ist %f\n", Bmigr);
-	
-	double nu,mu, tau;
-	
-	int SpeciesNumber;
-	
-	tau =  gsl_vector_get(nicheweb->migrPara,0);
-	
-	mu = gsl_vector_get(nicheweb->migrPara,1);
-// 	if((int)nu!=0)
-// 	{
-// 	  printf("nu ist nicht null sondern %f\n",nu);
-// 	}
-	
-	nu = gsl_vector_get(nicheweb->migrPara,2);
-	
-	SpeciesNumber = gsl_vector_get(nicheweb->migrPara,3);
-	double tlast = gsl_vector_get(nicheweb->migrPara,4);
+// 	int Z 		= nicheweb->Z;
+// 	//double dij 	= pow(10, d);
+// 	double Bmigr = gsl_vector_get(network, (Rnum+S)*(S+Rnum)+1+Y*Y+1+(Rnum+S)+S);
+// 	//printf("Bmigr ist %f\n", Bmigr);
+// 	
+// 	double nu,mu, tau;
+// 	
+// 	int SpeciesNumber;
+// 	
+// 	tau =  gsl_vector_get(nicheweb->migrPara,0);
+// 	
+// 	mu = gsl_vector_get(nicheweb->migrPara,1);
+// // 	if((int)nu!=0)
+// // 	{
+// // 	  printf("nu ist nicht null sondern %f\n",nu);
+// // 	}
+// 	
+// 	nu = gsl_vector_get(nicheweb->migrPara,2);
+// 	
+// 	SpeciesNumber = gsl_vector_get(nicheweb->migrPara,3);
+// 	double tlast = gsl_vector_get(nicheweb->migrPara,4);
 	
 //  	if(SpeciesNumber!= 0)
 // 	{
@@ -93,9 +93,9 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	gsl_matrix_view EA_mat = gsl_matrix_view_vector(&A_view.vector, (Rnum+S), (Rnum+S));				// A als Matrix_view
 	gsl_matrix *EAmat	   = &EA_mat.matrix;															// A als Matrix
 
-	gsl_vector_view D_view = gsl_vector_subvector(network, (Rnum+S)*(Rnum+S)+1, Y*Y);					// Migrationsmatrix D als Vektor
-	gsl_matrix_view ED_mat = gsl_matrix_view_vector(&D_view.vector, Y, Y);								// D als Matrixview
-	gsl_matrix *EDmat	   = &ED_mat.matrix;		// D als Matrix
+// 	gsl_vector_view D_view = gsl_vector_subvector(network, (Rnum+S)*(Rnum+S)+1, Y*Y);					// Migrationsmatrix D als Vektor
+// 	gsl_matrix_view ED_mat = gsl_matrix_view_vector(&D_view.vector, Y, Y);								// D als Matrixview
+// 	gsl_matrix *EDmat	   = &ED_mat.matrix;		// D als Matrix
 	
 	
 	gsl_vector_view M_vec  = gsl_vector_subvector(network, ((Rnum+S)*(Rnum+S))+1+(Y*Y)+1, (Rnum+S));	// Massenvektor
@@ -103,7 +103,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	
 	
  //-- verändere zu dem gewünschten Zeitpunkt Migrationsmatrix	
-	
+/*	
 	if( (t > tau) && (tlast < tau))
 	{	
 	    //printf("mu ist %f\n", gsl_vector_get(nicheweb->migrPara,1));
@@ -127,7 +127,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	else
 	{
 	  gsl_matrix_set_zero(EDmat);
-	}
+	}*/
 	
 
 	
@@ -177,8 +177,8 @@ int Holling2(double t, const double y[], double ydot[], void *params){
   
 //   gsl_matrix *Dmat	= gsl_matrix_calloc(Y,Y);				// gsl objects for calculations of migration
 //   gsl_vector *d1vec	= gsl_vector_calloc(Y);
-  gsl_vector *d2vec	= gsl_vector_calloc(Y);
-  gsl_vector *d3vec	= gsl_vector_calloc(Y);
+//   gsl_vector *d2vec	= gsl_vector_calloc(Y);
+//   gsl_vector *d3vec	= gsl_vector_calloc(Y);
   
 //	printf("\ncheckpoint Holling2 III\n");
 
@@ -250,8 +250,8 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 //	printf("\ncheckpoint Holling2 IV\n");
   
 //-- Migration lösen---------------------------------------------------------------------------------------------------------    
-  gsl_vector *ydottest	= gsl_vector_calloc(Y);
-  double ydotmigr = gsl_vector_get(nicheweb->migrPara, 5);
+//   gsl_vector *ydottest	= gsl_vector_calloc(Y);
+//   double ydotmigr = gsl_vector_get(nicheweb->migrPara, 5);
 
 //   int count=0,m;
 //   for(l = 0; l< Y;l++)
@@ -275,7 +275,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 //      printf("\n");
 //      }
 //   }
-  double max = gsl_matrix_max(EDmat); 
+  /*double max = gsl_matrix_max(EDmat); 
   for(l = Rnum; l< Rnum+S; l++)								// start of migration solving
   {
     if(l == SpeciesNumber+Rnum && max !=0 )
@@ -326,7 +326,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 //       gsl_vector_scale(d3vec, 1/gsl_vector_get(Mvec,l));			// d3(i)= Sum_j d(i,j)*xi(i,j)*m(l)^0.25
 //       gsl_vector_mul(d3vec, dyvec);					// d3(i)= Sum_j d(i,j)*xi(i,j)*m(l)^0.25*y(i)
 //     
-    
+/*    
     
       gsl_vector_set(d2vec,nu,Bmigr);
       gsl_vector_set(d3vec,mu,Bmigr);
@@ -351,7 +351,8 @@ int Holling2(double t, const double y[], double ydot[], void *params){
       gsl_vector_add(dydotvec, d2vec);				// 
       gsl_vector_sub(dydotvec, d3vec);				// Ergebnis in dydotvec (also ydot[]) = Sum_j d(i,j)*xi(i,j)*m(l)^0.25*y(j) - Sum_j d(i,j)*xi(i,j)*m(l)^0.25*y(i) 
       }
-  }// Patch i gewinnt das was aus allen j Patches zuwandert und verliert was von i auswandert
+  }*/ 
+// Patch i gewinnt das was aus allen j Patches zuwandert und verliert was von i auswandert
   //printf("ydot ist %f\n",gsl_vector_get(ydottest,0));
 
 	//printf("\ncheckpoint Holling2 V\n");
@@ -408,9 +409,9 @@ int Holling2(double t, const double y[], double ydot[], void *params){
   gsl_vector_free(rvec);
   gsl_vector_free(svec);
 //   gsl_vector_free(d1vec);
-  gsl_vector_free(d2vec);
-  gsl_vector_free(d3vec);
-  gsl_vector_free(ydottest);
+//   gsl_vector_free(d2vec);
+//   gsl_vector_free(d3vec);
+//   gsl_vector_free(ydottest);
   
 //	printf("\nCheckpoint Holling2 VI\n");
 

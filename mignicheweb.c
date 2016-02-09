@@ -13,7 +13,6 @@
 
 #include "structs.h"				// foodweb Struktur
 #include "mignicheweb.h"
-#include "topology.h"
 
 #include <time.h>
 #include <math.h>						// math functions
@@ -71,7 +70,7 @@ while(flag == 1)
 	gsl_matrix_set_zero(A);
 	A	= SetFeedingMatrix(nicheweb, NV, C, CRange, A);							// interaction matrix 
 
-	int links = CountLinks(A, (nicheweb.Rnum+nicheweb.S));	
+	int links = CountLinks(A, (nicheweb.Rnum+nicheweb.S), nicheweb.Rnum);	
 
 	//printf("Prüfe Linkanzahl\n");
 	double CON = (double)links/(((double)nicheweb.S)*((double)nicheweb.S)-1);
@@ -412,7 +411,7 @@ int index 	= 0;										// Läuft die Elemente von result ab
 
 	printf("Fressmatrix im Netzwerk\n");
 
-	gsl_vector_set(nicheweb.network, index, CountLinks(A, Rnum+S));
+	gsl_vector_set(nicheweb.network, index, CountLinks(A, Rnum+S, Rnum));
 	//printf("Index = %i, result %i gesetzt auf %f\n\n", index, index, gsl_vector_get(result, index+1));
 	index++;
 
@@ -430,7 +429,7 @@ int index 	= 0;										// Läuft die Elemente von result ab
 
 	printf("\nMigrationsmatrix im Netzwerk\n");
 
-	gsl_vector_set(nicheweb.network, index, CountLinks(D, Y));		//Nochmal checken ob decmigcount wirklich Links in D ist -> JA
+	gsl_vector_set(nicheweb.network, index, CountLinks(D, Y, 0));		//Nochmal checken ob decmigcount wirklich Links in D ist -> JA
 	//printf("result %i gesetzt auf %f\n\n", index, gsl_vector_get(result, index));
 	index++;
 
@@ -472,7 +471,7 @@ return 0;
 /*
 	Zählt die Einträge einer quadratischen Matrix, die nicht 0 sind.
 */
-int CountLinks(gsl_matrix* A, int Dim){
+int CountLinks(gsl_matrix* A, int Dim, int Rnum){
 
 int i, j = 0;
 int linkCount = 0;
