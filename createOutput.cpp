@@ -25,7 +25,7 @@ int createOutputGeneral(struct foodweb nicheweb, struct resource res, struct mig
 
     char buffers[100];				// Speicher für Dateiname
 
-    sprintf(buffers,"S%dB%d_M%d_x%1.1fY%dd%2.1fT%dL%dRSize%3.1fBmigr%3.5f.out",nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice,L,res.size, stochastic.Bmigr);		
+    sprintf(buffers,"S%dB%d_M%d_x%1.1fY%dd%2.1fT%dL%dRSize%3.1fBmigr%3.10f.out",nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice,L,res.size, stochastic.Bmigr);		
 	// sprintf: schreibt eine Zeichenkette in den Speicherbereich von buffers
 
     statistics = fopen(strcat(aims, buffers),"w");											// strcat: klebt zwei Strings aneinander (buffers an aims) -> Pfad+Name
@@ -101,7 +101,7 @@ int createOutputPatchwise(struct foodweb nicheweb, struct resource res, struct m
   
   FILE *statForPatchl;
   
-  sprintf(name,"Patch_l%dS%dB%d_M%d_x%1.1fY%dd%2.1fT%dL%dRSize%3.1fBmigr%3.5f.out",l,nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice,L,res.size, stochastic.Bmigr);		
+  sprintf(name,"Patch_l%dS%dB%d_M%d_x%1.1fY%dd%2.1fT%dL%dRSize%3.1fBmigr%3.10f.out",l,nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice,L,res.size, stochastic.Bmigr);		
   // sprintf: schreibt eine Zeichenkette in den Speicherbereich von buffers
   
   statForPatchl = fopen(strcat(aims, name),"w");											// strcat: klebt zwei Strings aneinander (buffers an aims) -> Pfad+Name
@@ -271,3 +271,38 @@ int createOutputBiomass(struct foodweb nicheweb, const double y[])
   
   return 0;
 }
+
+
+int createOutputRobustnessPatchwiseEachRun(struct foodweb nicheweb, struct data patchwise[], char* aims6, FILE* RobustnessEachRun, int L)
+{
+
+//   FILE *RobustnessEachRun;
+//   char buffers6[200];
+//   char aims[455] = "/home/tatjana/Arbeitsfläche/MichaelasProgramm/stochastischeMigration/Migration_in_Anfangsphase/Erste_Versuche/";
+  
+//   sprintf(buffers6,"RobustnessPatchwiseS%dB%d_M%d_x%1.1fY%dd%2.1fT%d.out",nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice);
+  if(L<1)
+  {
+    char buffers6[200];
+    sprintf(buffers6,"RobustnessPatchwiseS%dB%d_M%d_x%1.1fY%dd%2.1fT%d.out",nicheweb.S,nicheweb.B,nicheweb.M,nicheweb.x,nicheweb.Y,nicheweb.d,nicheweb.Tchoice);
+    RobustnessEachRun = fopen(strcat(aims6, buffers6),"w");
+    fprintf(RobustnessEachRun,"außen\tinnen\n");
+    fclose(RobustnessEachRun);  
+    
+  }
+
+//   printf("L ist %i\n",L);
+
+  RobustnessEachRun = fopen(aims6,"a");
+  if(nicheweb.Tchoice == 1)
+  {
+    fprintf(RobustnessEachRun,"%3.3f\t",(gsl_vector_get(patchwise[0].robness,0) + gsl_vector_get(patchwise[3].robness,0))/2);
+    fprintf(RobustnessEachRun,"%3.3f\n",(gsl_vector_get(patchwise[1].robness,0) + gsl_vector_get(patchwise[2].robness,0))/2);
+  }
+    
+  fclose(RobustnessEachRun);  
+  
+  return 0;
+  
+}
+  

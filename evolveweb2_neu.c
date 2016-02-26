@@ -181,9 +181,9 @@ Er wird definiert über vier Größen
     ti = k * tend1 / 78000.0;
     gsl_vector_set(nicheweb.migrPara, 4,tlast);	
 	//for(i=0; i<Rnum+S; i++)// Startgrößen
-    printf("t ist oben %f\n",t);
-    printf("ti ist oben %f\n",ti);
-    printf("k ist oben %i\n",k);
+//     printf("t ist oben %f\n",t);
+//     printf("ti ist oben %f\n",ti);
+//     printf("k ist oben %i\n",k);
 	//printf("mu ist %f\n", gsl_vector_get(nicheweb.migrPara, 1));
       //printf("nu ist %f\n", gsl_vector_get(nicheweb.migrPara, 2));	
     gsl_odeiv2_driver_set_hmax(d, 0.2);
@@ -294,18 +294,22 @@ Er wird definiert über vier Größen
   printf("Komme in zweite Schleife");
   for(k = 0; k<2000;k++)					
   { 
-    ti = k * (tend1-tend2)/2000.0 + tend1;
-    printf("t ist oben %f\n",t);
-    printf("ti ist oben %f\n",ti);
-    printf("k ist oben %i\n",k);
+    ti = k * (tend2-tend1)/2000.0 + tend1;
+    if(k<20)
+    {
+      printf("k ist %i\n",k);
+      printf("t ist oben %f\n",t);
+      printf("ti ist oben %f\n",ti);
+      printf("k ist oben %i\n",k);
+    }
     gsl_vector_set(nicheweb.migrPara, 4,tlast);	
     //printf("SpeciesNumber %f\n", gsl_vector_get(nicheweb.migrPara,Z+3));
     //printf("t=%f\n", t);
     countsteps++;
     //printf("y=%f\n", y[1]);
     gsl_odeiv2_driver_set_hmax(d, 0.2);
-    int status = gsl_odeiv2_driver_apply(d, &t, tend1, y);		// Hier werden fixp Variablen benutzt
-
+    int status = gsl_odeiv2_driver_apply(d, &t, ti, y);		// Hier werden fixp Variablen benutzt
+//     printf("t ist %f\n",t);
 //     printf("h ist %f\n",h);
     hmean += h;
 //     k++;

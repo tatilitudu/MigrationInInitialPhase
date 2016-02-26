@@ -97,6 +97,8 @@ int main(int argc, char** argv)
 	
 	int L = 5;	// Statistik
 	int i = 0,j;	// Counter
+	char aims6[255] = ORT;
+	FILE* RobustnessEachRun;
 	
 	int checksum = getArgs(argc, argv, &(nicheweb.S), &(nicheweb.B), &(nicheweb.T), &(nicheweb.d), &L, &(nicheweb.Y), &(nicheweb.x), &(nicheweb.M), &(res.size), &(nicheweb.Z), &(stochastic.Bmigr));	
 
@@ -155,7 +157,9 @@ int main(int argc, char** argv)
 	printf("d ist %f\n",nicheweb.d);
 	res.size = res.size/10;
 	stochastic.Bmigr = pow(10,stochastic.Bmigr);
+	nicheweb.Z = pow(10,nicheweb.Z);
 	printf("Bmigr ist %f\n",stochastic.Bmigr);
+	printf("Z ist %i\n",nicheweb.Z);
 	printf("x ist %f\n",nicheweb.x);
 	//int len	= ((nicheweb.Rnum+nicheweb.S)*(nicheweb.S+nicheweb.Rnum)+1+nicheweb.Y*nicheweb.Y+1+(nicheweb.Rnum+nicheweb.S)+nicheweb.S);	// Länge des Rückabewerts
 
@@ -264,6 +268,8 @@ int main(int argc, char** argv)
 		
 		determineMean(meanOfDatatemp, (6*4+2)*nicheweb.Y, meanOfData);
 		determineMeanSqu(meanOfDatatemp, (6*4+2)*nicheweb.Y, meanSquOfData);
+		
+		createOutputRobustnessPatchwiseEachRun(nicheweb,patchwise,aims6,RobustnessEachRun,i);
 		
 		printf("\nBeende Durchlauf L = %i\n", i);
 	 }

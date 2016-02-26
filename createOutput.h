@@ -8,5 +8,6 @@ int createOutputPatchwise(struct foodweb nicheweb, struct resource res, struct m
 int createOutputSpeciesNumber(struct foodweb nicheweb, struct resource res, char* aims, double SpeciesNumber[][2], int L, double migrationEventNumber);
 int createOutputPatchlink(struct foodweb nicheweb, struct resource res, char* aims, double AllMu[][2], double AllNu[][2], int L, double migrationEventNumber);
 int createOutputBiomass(struct foodweb nicheweb, const double y[]);
+int createOutputRobustnessPatchwiseEachRun(struct foodweb nicheweb, struct data patchwise[],char* aims, FILE* RobustnessEachRun, int L);
 
 #endif

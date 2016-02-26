@@ -26,7 +26,7 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_randist.h>			// random number distributions
 #include <gsl/gsl_sort_vector.h>		// vector sorting functions
-#include <gsl/gsl_odeiv.h>				// differential equation solver
+#include <gsl/gsl_odeiv2.h>				// differential equation solver
 #include <gsl/gsl_errno.h>				// errorhandler
 
 
@@ -86,7 +86,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 // 	{
 // 	  //printf("SpeciesNumber %i\n", SpeciesNumber);
 // 	}
-	  //printf("t oben %f\n",t);
+	 printf("t HOLLING %f\n",t);
 		//int len	 = (Rnum+S)*(Rnum+S)+2+Y*Y+(Rnum+S)+S;
 	
 	gsl_vector_view A_view = gsl_vector_subvector(network, 0, (Rnum+S)*(Rnum+S));						// Fressmatrix A als Vektor

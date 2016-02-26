@@ -15,6 +15,7 @@ Diese Funktion wertet ein zeitlich entwickeltes Nischennetz in Bezug auf Robusth
 */
 #include "robustness.h"
 #include "structs.h"
+#include "createOutput.h"
 
 #include <math.h>
 #include <stdio.h>					
@@ -267,6 +268,8 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
 		gsl_vector_set(patchwise[l].robness, 0, Rob);
 		gsl_vector_set(patchwise[l].robness, 1, Rob2);
 		
+		
+		
 // 		printf("in Patch 0 ist biomassfin in matrix %f\n", databfini[0][0]);
 // 		printf("in Patch %i ist biomassfin in patchwise %f\n", l, gsl_vector_get(patchwise[l].bfini,0));
 // 		printf("in Patch 0 ist biomassfin in patchwise %f\n", gsl_vector_get(patchwise[0].bfini,0));
@@ -286,7 +289,7 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
 		
     }//*
 
-
+ 
 //--result skalieren ---------------------------------------------------------------------------------------------------
  gsl_vector_set(result, 0, gsl_vector_get(result, 0)/(double)Y);		// Rob skalieren auf pro Patch
  gsl_vector_set(result, 1, gsl_vector_get(result, 1)/(double)Y);		// Perges ebenso

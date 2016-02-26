@@ -118,7 +118,7 @@ int getArgs(int argc, char** argv, int* S_value, int* B_value, int* T_value, dou
 	
 		case 'A':	*A_value = atof(argv[++i]);
 					A_check  = 1;
-					printf("Eine Migrationseinheit ist %f \n", *A_value);
+					printf("Eine Migrationseinheit ist 10^(%f) \n", *A_value);
 					break;
 					
 
