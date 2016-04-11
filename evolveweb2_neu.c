@@ -291,7 +291,7 @@ Er wird definiert über vier Größen
 	//printf("t=%f\n", t);	
 
   //double migrationWerte[4];
-  printf("Komme in zweite Schleife");
+//   printf("\nKomme in zweite Schleife\n");
   for(k = 0; k<2000;k++)					
   { 
     ti = k * (tend2-tend1)/2000.0 + tend1;

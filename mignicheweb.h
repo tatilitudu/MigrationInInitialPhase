@@ -19,4 +19,12 @@ gsl_vector* LinkElements(struct foodweb, gsl_matrix*, gsl_matrix*, gsl_matrix*, 
 
 int CountLinks(gsl_matrix*, int, int);	
 
+void CallocFoodwebMem(struct foodweb*);
+void SetZeroFoodwebMem(struct foodweb*);
+void FreeFoodwebMem(struct foodweb*);
+void AddTrophicWebParams(struct foodweb*, gsl_matrix*, gsl_matrix*);
+
+void CallocStochasticMem(struct migration* stochastic, int, int);
+void FreeStochasticMem(struct migration* stochastic);
+
 #endif

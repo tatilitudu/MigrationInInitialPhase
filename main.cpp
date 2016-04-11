@@ -80,13 +80,15 @@ int main(int argc, char** argv)
 {	
 
 //--Foodweb Struktur mit Standardwerten aufstellen------------------------------------------------------------------------------------------
+	struct simuParams simParams 	= {0.3, 0.65, 0.35, 0.5, 6.0};			// Diese Parameter sind konstant
+	struct simuMemory simMem 	= {NULL, NULL, NULL, NULL, NULL};		// Größe der Vektoren liegt noch nicht fest	
 
 	gsl_vector* fixpunkte	= gsl_vector_calloc(9);
  	
 
-	struct foodweb nicheweb	= {NULL, fixpunkte, NULL, 18, 3, 1, 5, 0, 0, -7., 0.0, 0, 1};		// Reihenfolge: network, fxpkt, migrPara, AllMus, AllNus, S, B, Rnum, Y, T, Tchoice, d, x, M, Z
+	struct foodweb nicheweb	= {NULL, fixpunkte, NULL,&simParams, &simMem, 18, 3, 1, 5, 0, 0, -7., 0.0, 0, 1};		// Reihenfolge: network, fxpkt, migrPara, AllMus, AllNus, S, B, Rnum, Y, T, Tchoice, d, x, M, Z
 	
-	struct migration stochastic = {NULL, NULL, NULL, NULL, NULL, NULL, 0.00001};
+	struct migration stochastic = {NULL, NULL, NULL, NULL, NULL, NULL, 0.00001, NULL, NULL, NULL, NULL, NULL};
 	
 	struct resource res = {500.0, 0.0};											// Resource: Größe, Wachstum
 	
@@ -108,9 +110,13 @@ int main(int argc, char** argv)
 			return(0);		
 		 }
 
-	int length			= ((nicheweb.Rnum+nicheweb.S)*(nicheweb.S+nicheweb.Rnum)+1+nicheweb.Y*nicheweb.Y+1+(nicheweb.Rnum+nicheweb.S)+nicheweb.S+1);	// Länge des Rückabewerts
+/*	int length			= ((nicheweb.Rnum+nicheweb.S)*(nicheweb.S+nicheweb.Rnum)+1+nicheweb.Y*nicheweb.Y+1+(nicheweb.Rnum+nicheweb.S)+nicheweb.S+1);	// Länge des Rückabewerts
 	nicheweb.network = gsl_vector_calloc(length);	 
-		 
+*/	
+	// Speicher belegen, nachdem die Größe des Systems durch die Konsoleneingabe bekannt ist	
+	CallocFoodwebMem(&nicheweb); 
+	CallocStochasticMem(&stochastic, nicheweb.Y, nicheweb.S);
+	
 	printf("Z = %i\n",nicheweb.Z);
 	nicheweb.migrPara = gsl_vector_calloc(7); // Reihenfolge: tau, mu, nu, SpeciesNumber, momentanes t, ymigr, migrationEventNumber	 
 // 	stochastic.SpeciesNumbers = gsl_vector_calloc(nicheweb.Z);
@@ -358,7 +364,8 @@ int main(int argc, char** argv)
 
 	}
 	
-
+	FreeFoodwebMem(&nicheweb);	// eigene Funktion
+	FreeStochasticMem(&stochastic);
 	gsl_vector_free(nicheweb.migrPara);
 // 	gsl_vector_free(stochastic.AllMus);
 // 	gsl_vector_free(stochastic.AllNus);

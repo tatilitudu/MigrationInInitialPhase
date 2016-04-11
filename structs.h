@@ -13,6 +13,9 @@ struct foodweb{
 	gsl_vector* fixpunkte;				// fix0,1,2, fixp0,1,2, testf0,1,2
 	gsl_vector* migrPara;
 	
+	struct simuParams* simuParams;	// Feste Simulationsparameter wie Attackraten etc.
+	struct simuMemory* simuMem;		// Fester Simulationsspeicher für Lösen der DGL
+	
 	
 	int S;
 	int B;
@@ -30,6 +33,23 @@ struct foodweb{
 	
 };
 
+struct simuParams{
+    const double alpha;		// respiration coefficient
+    const double lambda;	// ecologic efficiency
+    const double hand;		// handling time
+    const double beta;		// intraspecific competition
+    const double aij;		// attack rate (same for all species)
+};
+
+struct simuMemory{
+// muss für jedes neue Nahrungsnetz überschrieben werden, also L mal
+    gsl_vector* Masses;		// Massen
+    gsl_matrix* A_scaled;	// Adjazenzmatrix mit a und f_ij skaliert
+    gsl_vector* tvec;		// Hilfsspeicher einzelnes Habitat
+    gsl_vector* rvec;		// Hilfsspeicher einzelnes Habitat 
+    gsl_vector* svec;		// Hilfsspeicher einzelnes Habitat
+};
+
 
 struct migration{
   
@@ -40,6 +60,13 @@ struct migration{
 	gsl_vector* Biomass_AllMus;
 	gsl_vector* Biomass_AllNus;
 	double Bmigr;
+	
+	gsl_vector *a;
+	gsl_vector *c;
+	gsl_vector *linkCount;
+	
+	gsl_vector *aSpecies;
+	gsl_vector *cSpecies;
 	
 };
 

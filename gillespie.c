@@ -25,14 +25,14 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
   int Rnum = nicheweb.Rnum;
   int Z = nicheweb.Z;
   //gsl_vector *network 	= nicheweb.network;		// Inhalt: A+linksA+Y+linksY+Massen+Trophische_Level = (Rnum+S)²+1+Y²+1+(Rnum+S)+S
-  gsl_vector *a	= gsl_vector_calloc(Y);
+//   gsl_vector *a	= gsl_vector_calloc(Y);
   double atot;
 /*  gsl_vector_view D_view = gsl_vector_subvector(network, (Rnum+S)*(Rnum+S)+1, Y*Y);					// Migrationsmatrix D als Vektor
   gsl_matrix_view ED_mat = gsl_matrix_view_vector(&D_view.vector, Y, Y);								// D als Matrixview
   gsl_matrix *EDmat	 = &ED_mat.matrix;*/	
   
-  gsl_vector *c	= gsl_vector_calloc(Y);
-  gsl_vector *linkCount	= gsl_vector_calloc(Y);
+//   gsl_vector *c	= gsl_vector_calloc(Y);
+//   gsl_vector *linkCount	= gsl_vector_calloc(Y);
   double ctemp=0;
   double Bmigr = stochastic.Bmigr;
   //printf("Bmigr ist %f\n", Bmigr);
@@ -47,11 +47,11 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
     {
       ctemp += y[l*(Rnum+S)+i];
     }
-    gsl_vector_set(c,l,ctemp);
+    gsl_vector_set(stochastic.c,l,ctemp);
     //printf("c[%i] ist %f\n",l,gsl_vector_get(c,l));
   }
   //ctot = gsl_blas_dasum(c);
-  gsl_vector_scale(c,1/Bmigr);
+  gsl_vector_scale(stochastic.c,1/Bmigr);
   
   int linkCountTemp, m;
 
@@ -77,15 +77,15 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
 	  linkCountTemp++;
 	}
       }
-      gsl_vector_set(linkCount,l,linkCountTemp);
+      gsl_vector_set(stochastic.linkCount,l,linkCountTemp);
     }
   
-    gsl_vector_memcpy(a,linkCount);
-    gsl_vector_mul(a,c);
-    gsl_vector_scale(a,dij);
+    gsl_vector_memcpy(stochastic.a,stochastic.linkCount);
+    gsl_vector_mul(stochastic.a,stochastic.c);
+    gsl_vector_scale(stochastic.a,dij);
     //printf("c ist %f\n",gsl_vector_get(c,3));
     //printf("a ist %f\n",gsl_vector_get(a,3));
-    atot = gsl_blas_dasum(a);
+    atot = gsl_blas_dasum(stochastic.a);
     //printf("atot ist %f\n",atot);
     //printf("Z ist %i\n", Z);
     
@@ -101,11 +101,11 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
     //printf("Berechne von welchem Patch aus migriert werden soll\t");
     //printf("r: %f\n",r);
     //printf("atot: %f\n",atot);
-    int mu = select_patch(stochastic, a, atot, rng1, Y);
+    int mu = select_patch(stochastic,  atot, rng1, Y);
     //printf("population ist %f\n",gsl_vector_get(stochastic.Biomass_AllMus, migrationEventNumber));
     //gsl_vector_set(stochastic.AllMus, migrationEventNumber, mu);
     gsl_vector_set(nicheweb.migrPara, 1, mu);
-    double biomassAllMus = gsl_vector_get(c,mu)*Bmigr;
+    double biomassAllMus = gsl_vector_get(stochastic.c,mu)*Bmigr;
     double test;
     for(i = 0; i< S ; i++)
     {
@@ -153,13 +153,13 @@ int stochMigration(struct foodweb nicheweb, struct migration stochastic, const d
       
     }
     
-    gsl_vector_free(a);
+//     gsl_vector_free(a);
   }
   
 
   
-  gsl_vector_free(c);
-  gsl_vector_free(linkCount);
+//   gsl_vector_free(c);
+//   gsl_vector_free(linkCount);
   
   
   
@@ -183,7 +183,7 @@ double choose_time(double atot, gsl_rng* rng1)
 }
 
 
-int select_patch(struct migration stochastic, gsl_vector* a, double atot, gsl_rng* rng1, int Y)
+int select_patch(struct migration stochastic,  double atot, gsl_rng* rng1, int Y)
 {
   double r = gsl_rng_uniform_pos(rng1);
   int i;
@@ -194,7 +194,8 @@ int select_patch(struct migration stochastic, gsl_vector* a, double atot, gsl_rn
   //printf("r*atot in select_patch ist %f\n",r);
   for(i=0;i<Y;i++)
   {
-    sum += gsl_vector_get(a,i);
+//     printf("a[%i] = %f",i,gsl_vector_get(stochastic.a,i));
+    sum += gsl_vector_get(stochastic.a,i);
     if( r < sum )
     {
       mu = i;
@@ -231,9 +232,9 @@ int select_patch_random(struct foodweb nicheweb, gsl_rng* rng1)
   if(patchNumber>3)
   {
     patchNumber = 3;
-    printf("nu ist %i\n",patchNumber);
-    printf("patchNumberFloat ist %f\n",patchNumberFloat);
-    printf("Zufallszahl ist %f\n", r);
+//     printf("nu ist %i\n",patchNumber);
+//     printf("patchNumberFloat ist %f\n",patchNumberFloat);
+//     printf("Zufallszahl ist %f\n", r);
   }
 //   if(patchNumberFloat>0) patchNumber = (int)(patchNumberFloat + 0.5);
 // 	
@@ -250,9 +251,9 @@ int select_species(struct foodweb nicheweb, struct migration stochastic, gsl_rng
   int S = nicheweb.S;
   int Y = nicheweb.Y;
   int Rnum = nicheweb.Rnum;
-  gsl_vector *network = nicheweb.network;
-  gsl_vector_view M_vec = gsl_vector_subvector(network, ((Rnum+S)*(Rnum+S))+1+(Y*Y)+1, (Rnum+S));	// Massenvektor
-  gsl_vector *Mvec = &M_vec.vector;
+//   gsl_vector *network = nicheweb.network;
+//   gsl_vector_view M_vec = gsl_vector_subvector(network, ((Rnum+S)*(Rnum+S))+1+(Y*Y)+1, (Rnum+S));	// Massenvektor
+//   gsl_vector *Mvec = &M_vec.vector;
   
   
   
@@ -261,34 +262,34 @@ int select_species(struct foodweb nicheweb, struct migration stochastic, gsl_rng
   double sum = 0;
   double atot;
   double r = gsl_rng_uniform_pos(rng1);
-  gsl_vector *a = gsl_vector_calloc(S);
-  gsl_vector *c = gsl_vector_calloc(S);
+//   gsl_vector *a = gsl_vector_calloc(S);
+//   gsl_vector *c = gsl_vector_calloc(S);
   
   
   //printf("Berechne, welche Spezies migrieren darf\t\t\t");
   
   for(i = 0; i< S ;i++)
   {
-    gsl_vector_set(a,i,y[mu*(Rnum+S)+(Rnum+i)]);
+    gsl_vector_set(stochastic.aSpecies,i,y[mu*(Rnum+S)+(Rnum+i)]);
   }
   //printf("Eintrag 5 von y ist %f\n", y[5]);
   // Nur Abhängigkeit, wie groß Population ist == 0; zusätzlich Massen == 1
   if(Choice == 0)
   {
-    atot = gsl_blas_dasum(a);
-    gsl_vector_scale(a, 1/atot);
+    atot = gsl_blas_dasum(stochastic.aSpecies);
+    gsl_vector_scale(stochastic.aSpecies, 1/atot);
   }
   else if(Choice == 1)
   {
     double ctot;
     for(i = 0; i < S; i++ )
     {
-      gsl_vector_set(c, i , gsl_vector_get(Mvec,i+Rnum));
+      gsl_vector_set(stochastic.cSpecies, i , gsl_vector_get(nicheweb.simuMem->Masses,i+Rnum));
     }
-    ctot = gsl_blas_dasum(c);
-    gsl_vector_scale(c,1/ctot);
-    gsl_vector_mul(a,c);
-    atot = gsl_blas_dasum(a);
+    ctot = gsl_blas_dasum(stochastic.cSpecies);
+    gsl_vector_scale(stochastic.cSpecies,1/ctot);
+    gsl_vector_mul(stochastic.aSpecies,stochastic.cSpecies);
+    atot = gsl_blas_dasum(stochastic.aSpecies);
   }
     
   // Abhängigkeit
@@ -301,7 +302,7 @@ int select_species(struct foodweb nicheweb, struct migration stochastic, gsl_rng
   
   for(i=0;i<S;i++)
   {
-    sum += gsl_vector_get(a,i);
+    sum += gsl_vector_get(stochastic.aSpecies,i);
     if( r < sum )
     {
       SpeciesNumber = i;
@@ -311,8 +312,8 @@ int select_species(struct foodweb nicheweb, struct migration stochastic, gsl_rng
 //   double biomassSpecies = 1/atot*gsl_vector_get(a,SpeciesNumber);
 //   gsl_vector_set(stochastic.Biomass_SpeciesNumbers, migrationEventNumber, biomassSpecies);
 
-  gsl_vector_free(a);
-  gsl_vector_free(c);
+//   gsl_vector_free(stochastic.aSpecies);
+//   gsl_vector_free(c);
   
   return SpeciesNumber;
   

@@ -114,7 +114,10 @@ while(flag == 1)
 								// migration matrix
 
  	LinkElements(nicheweb, NV, A, mas, D, Rsize, stochastic.Bmigr, len);	
-		
+	
+	// die Sachen in den SimuMem Teil abspeichern
+	AddTrophicWebParams(&nicheweb, A, mas);
+	
  		 printf("\nNetzwerk erfolgreich erzeugt!\n");
 
 //  gsl_matrix_free(D);
@@ -457,7 +460,7 @@ int index 	= 0;										// Läuft die Elemente von result ab
 		printf("%3.1f\t", gsl_vector_get(nicheweb.network, index));
 		index++;
 	  }
-	  printf("Bmigr ist %f\n", Bmigr);
+	  printf("\nBmigr ist %f\n", Bmigr);
 	  gsl_vector_set(nicheweb.network, index, Bmigr);
 
 	printf("\nNetzwerkkomponenten zusammengesetzt. Insgesamt %i Elemente\n\n", index);
@@ -492,4 +495,73 @@ return linkCount;
 
 
 
+void AddTrophicWebParams(struct foodweb* web, gsl_matrix* A, gsl_matrix* mas){
+  int i,j = 0;
+  int rowsum = 0;
+  for(i=0; i< (web->S + web->Rnum); i++){
+      gsl_vector_set(web->simuMem->Masses, i, gsl_matrix_get(mas, 0, i));  // Masses
+  }
+  printf("Massen gesetzt in SimuMem\n");
+ // gsl_matrix_memcpy(web->simuMem->A_scaled, A);		// A_scaled = A
+  for(i=0; i< (web->Rnum+web->S); i++)
+    {
+      gsl_vector_view rowA   = gsl_matrix_row(A, i);
+		      rowsum = gsl_blas_dasum(&rowA.vector);
+      if(rowsum !=0 )
+      {
+	for(j=0; j<web->Rnum+web->S; j++)
+	  gsl_matrix_set(web->simuMem->A_scaled, i, j, (gsl_matrix_get(A, i, j)/rowsum));	// normiere Beute A_scaled = A(Beutelinks auf 1 normiert) = f(i,j)
+      }
+    }
+  gsl_matrix_scale(web->simuMem->A_scaled, web->simuParams->aij);		// A_scaled = A*aij*fij
+};
 
+void CallocFoodwebMem(struct foodweb* web){
+  printf("Rnum ist %i, S ist %i, Y ist %i, len ist %i\n", web->Rnum, web->S, web->Y, (web->Rnum+web->S)*(web->S+web->Rnum) + 1 + web->Y *web->Y + 1 + (web->Rnum+web->S)+web->S);
+    web->network = gsl_vector_calloc((web->Rnum+web->S)*(web->S+web->Rnum) + 1 + web->Y *web->Y + 1 + (web->Rnum+web->S)+web->S+1);
+    printf("netzwerk vektor in nicheweb angelegt\n Länge ist %i\n", ((web->Rnum+web->S)*(web->S+web->Rnum)+1+web->Y*web->Y+1+(web->Rnum+web->S)+web->S));
+    web->simuMem->Masses = gsl_vector_calloc(web->Rnum+web->S);				// Massen
+    web->simuMem->A_scaled = gsl_matrix_calloc(web->Rnum+web->S, web->Rnum+web->S);	// A mit a und f_ij skaliert
+    web->simuMem->tvec = gsl_vector_calloc(web->Rnum+web->S);			// Hilfsspeicher einzelnes Habitat
+    web->simuMem->rvec = gsl_vector_calloc(web->Rnum+web->S);			// Hilfsspeicher einzelnes Habitat 
+    web->simuMem->svec = gsl_vector_calloc(web->Rnum+web->S);			// Hilfsspeicher einzelnes Habitat
+  
+
+}
+/* Nullt Speicher den der DGL SOlver benutzt.
+ */
+void SetZeroFoodwebMem(struct foodweb* web){
+    gsl_vector_set_zero(web->simuMem->Masses); 		// Massen
+    gsl_matrix_set_zero(web->simuMem->A_scaled);	// A mit a und f_ij skaliert
+    gsl_vector_set_zero(web->simuMem->tvec);		// Hilfsspeicher einzelnes Habitat
+    gsl_vector_set_zero(web->simuMem->rvec);		// Hilfsspeicher einzelnes Habitat 
+    gsl_vector_set_zero(web->simuMem->svec);		// Hilfsspeicher einzelnes Habitat
+
+}
+/* Gibt Speicher entsprechend der gewählten Parameter frei, die der DGL SOlver benutzt.
+ */
+void FreeFoodwebMem(struct foodweb* web){
+    gsl_vector_free(web->simuMem->Masses);
+    gsl_vector_free(web->simuMem->tvec);
+    gsl_vector_free(web->simuMem->rvec);   
+    gsl_vector_free(web->simuMem->svec);
+    gsl_matrix_free(web->simuMem->A_scaled);    
+}
+
+
+void CallocStochasticMem(struct migration* stochastic,int Y, int S){
+    stochastic->a	= gsl_vector_calloc(Y);
+    stochastic->c	= gsl_vector_calloc(Y);  
+    stochastic->linkCount= gsl_vector_calloc(Y);
+    stochastic->aSpecies	= gsl_vector_calloc(S);
+    stochastic->cSpecies	= gsl_vector_calloc(S); 
+
+}
+
+void FreeStochasticMem(struct migration* stochastic){
+    gsl_vector_free(stochastic->a);
+    gsl_vector_free(stochastic->c);
+    gsl_vector_free(stochastic->linkCount);   
+    gsl_vector_free(stochastic->aSpecies);
+    gsl_vector_free(stochastic->cSpecies);
+}

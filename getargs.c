@@ -113,12 +113,12 @@ int getArgs(int argc, char** argv, int* S_value, int* B_value, int* T_value, dou
 					
 		case 'Z':	*Z_value = atoi(argv[++i]);
 					Z_check  = 1;
-					printf("Es wird zu %i Zeitpunkten migriert \n", *Z_value);
+// 					printf("Es wird zu %i Zeitpunkten migriert \n", *Z_value);
 					break;
 	
 		case 'A':	*A_value = atof(argv[++i]);
 					A_check  = 1;
-					printf("Eine Migrationseinheit ist 10^(%f) \n", *A_value);
+// 					printf("Eine Migrationseinheit ist 10^(%f) \n", *A_value);
 					break;
 					
 
