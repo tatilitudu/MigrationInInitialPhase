@@ -46,16 +46,16 @@ gsl_vector* EvolveNetwork(struct foodweb nicheweb, struct migration stochastic, 
 	printf("Bmigr ist %f\n", Bmigr);
 	//int Tchoice 	= nicheweb.Tchoice;
 	//double tcheck	= 7805; 
-	double aussterbeSchwelle; 
+	double aussterbeSchwelle = 1e-5; 
 	
-	if(stochastic.Bmigr < 1e-5)
-	{
-	  aussterbeSchwelle = stochastic.Bmigr;
-	}
-	else
-	{
-	  aussterbeSchwelle = 1e-5;
-	}
+// 	if(stochastic.Bmigr < 1e-5)
+// 	{
+// 	  aussterbeSchwelle = stochastic.Bmigr;
+// 	}
+// 	else
+// 	{
+// 	  aussterbeSchwelle = 1e-5;
+// 	}
 	
 	printf("aussterbeSchwelle ist %f\n",aussterbeSchwelle);
 	
@@ -188,7 +188,7 @@ Er wird definiert über vier Größen
       //printf("nu ist %f\n", gsl_vector_get(nicheweb.migrPara, 2));	
     gsl_odeiv2_driver_set_hmax(d, 0.2);
     int status = gsl_odeiv2_driver_apply(d, &t, ti, y);
-    printf("status ist %i\n",status);
+//     printf("status ist %i\n",status);
 
     if(status != GSL_SUCCESS) {
 		printf("Fehler beim Lösen der DGL!\n");		
@@ -295,13 +295,13 @@ Er wird definiert über vier Größen
   for(k = 0; k<2000;k++)					
   { 
     ti = k * (tend2-tend1)/2000.0 + tend1;
-    if(k<20)
-    {
-      printf("k ist %i\n",k);
-      printf("t ist oben %f\n",t);
-      printf("ti ist oben %f\n",ti);
-      printf("k ist oben %i\n",k);
-    }
+//     if(k<20)
+//     {
+//       printf("k ist %i\n",k);
+//       printf("t ist oben %f\n",t);
+//       printf("ti ist oben %f\n",ti);
+//       printf("k ist oben %i\n",k);
+//     }
     gsl_vector_set(nicheweb.migrPara, 4,tlast);	
     //printf("SpeciesNumber %f\n", gsl_vector_get(nicheweb.migrPara,Z+3));
     //printf("t=%f\n", t);

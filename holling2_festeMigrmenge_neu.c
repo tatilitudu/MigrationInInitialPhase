@@ -86,7 +86,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 // 	{
 // 	  //printf("SpeciesNumber %i\n", SpeciesNumber);
 // 	}
-	 printf("t HOLLING %f\n",t);
+// 	 printf("t HOLLING %f\n",t);
 		//int len	 = (Rnum+S)*(Rnum+S)+2+Y*Y+(Rnum+S)+S;
 	
 	gsl_vector_view A_view = gsl_vector_subvector(network, 0, (Rnum+S)*(Rnum+S));						// Fressmatrix A als Vektor

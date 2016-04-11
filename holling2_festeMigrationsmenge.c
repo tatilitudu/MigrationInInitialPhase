@@ -111,8 +111,8 @@ int Holling2(double t, const double y[], double ydot[], void *params){
 	    gsl_vector_set(nicheweb->migrPara,4,t);
 
 	    //printf("Setze Link für gewünschte Migration\n");
-	    printf("t oben %f\n",t);
-	    printf("tlast oben %f\n",tlast);
+// 	    printf("t oben %f\n",t);
+// 	    printf("tlast oben %f\n",tlast);
 	    gsl_matrix_set(EDmat, nu, mu, 1.);
 	    //int m;
 // 	    for(l = 0; l< Y;l++)
@@ -339,7 +339,7 @@ int Holling2(double t, const double y[], double ydot[], void *params){
       //if(gsl_vector_get(ydottest,mu)!=0)
       //{
       ydotmigr += gsl_vector_get(ydottest,nu);
-      printf("ydotmigr ist %f\n",ydotmigr);
+//       printf("ydotmigr ist %f\n",ydotmigr);
       
       gsl_vector_set(nicheweb->migrPara,5,ydotmigr);
 //     if(ydotmigr !=0)

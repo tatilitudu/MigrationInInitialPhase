@@ -51,9 +51,9 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
 
 	
 
-	int testf0 = (int)gsl_vector_get(evolNetwork, 5*(Rnum+S)+S+0);
-	int testf1 = (int)gsl_vector_get(evolNetwork, 5*(Rnum+S)+S+1);
-	int testf2 = (int)gsl_vector_get(evolNetwork, 5*(Rnum+S)+S+2);
+	int testf0 = (int)gsl_vector_get(evolNetwork, 5*Y*(Rnum+S)+S+0);
+	int testf1 = (int)gsl_vector_get(evolNetwork, 5*Y*(Rnum+S)+S+1);
+	int testf2 = (int)gsl_vector_get(evolNetwork, 5*Y*(Rnum+S)+S+2);
 
 	
 	 
@@ -61,8 +61,12 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
 	
 	printf("Fixpunktsuche\n");
 
-	int fix3, fix4, fix5, fix6, fix7 = 0;
- 
+	int fix3 = 0, fix4=0, fix5=0, fix6=0, fix7 = 0;
+	if(fix4 !=0)
+	{
+	  printf("fix4 ist %i\n",fix4);
+	}
+	
     for(i=0; i<(Rnum+S)*Y; i++)
     {
 		float y_i	= gsl_vector_get(&yfin.vector, i);
@@ -79,11 +83,31 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
       }
       else if ((max!=0) && (min!=0)) 	// zu keinem Zeitpunkt ausgestorben
       {
-		if((((max-min)/(max+min))< 0.0001)	|| ((max-min)< 0.0001))	fix3++;		
-		if(((max-min)/(max+min)) < 0.0001) 				fix4++;
-		if((max-min)< 0.0001) 						fix5++;				// max Schwankung in Population kleiner als 0.0001
-		if((((max-min)/(max+min))< 0.001)	|| ((max-min)< 0.001)) 	fix6++;
-		if((((max-min)/(max+min))< 0.00001)	|| ((max-min)< 0.00001))fix7++;
+		if((((max-min)/(max+min))< 0.0001)	|| ((max-min)< 0.0001))	
+		{
+		  fix3++;
+		  printf("In Fix3 und max ist %f und min ist %f\n",max,min);
+		}
+		if(((max-min)/(max+min)) < 0.0001)
+		{
+		  fix4++;
+		  printf("In Fix4 (%i) und max ist %f und min ist %f\n",fix4,max,min);
+		}
+		if((max-min)< 0.0001)
+		{
+		  fix5++;				// max Schwankung in Population kleiner als 0.0001
+		  printf("In Fix5 und max ist %f und min ist %f\n",max,min);
+		}
+		if((((max-min)/(max+min))< 0.001)	|| ((max-min)< 0.001))
+		{
+		  fix6++;
+		  printf("In Fix6 und max ist %f und min ist %f\n",max,min);
+		}
+		if((((max-min)/(max+min))< 0.00001)	|| ((max-min)< 0.00001))
+		{
+		  fix7++;
+		  printf("In Fix7 und max ist %f und min ist %f\n",max,min);
+		}
       }
     }
 
@@ -325,6 +349,11 @@ gsl_vector *EvaluateRobustness(gsl_vector* evolNetwork, struct foodweb nicheweb,
   if(fix7==(Rnum+S)*Y)	gsl_vector_set(result, 61, 1);
      	   		   else gsl_vector_set(result, 61, 0);
 
+  printf("am ende ist fix3 %i\n",fix3);
+  printf("am ende ist fix4 %i\n",fix4);
+  printf("am ende ist fix5 %i\n",fix5);
+  printf("am ende ist fix6 %i\n",fix6);
+  printf("am ende ist fix7 %i\n",fix7);
 //--Result 51, 52, 53- Synchronisation?-----------------------------------------------------------------------------------------------------
   l=0;
   

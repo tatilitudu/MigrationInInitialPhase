@@ -126,8 +126,8 @@ int main(int argc, char** argv)
 		gsl_rng *rng1;   													// initialize random number generator
 		gsl_rng_env_setup();   												// ermöglicht Konsolenparameter
 		rng1_T = gsl_rng_default;   										// default random number generator (so called mt19937)
-		//gsl_rng_default_seed = 0;											// default seed for rng
-		gsl_rng_default_seed = ((unsigned)time(NULL));						// random starting seed for rng
+		gsl_rng_default_seed = 0;											// default seed for rng
+// 		gsl_rng_default_seed = ((unsigned)time(NULL));						// random starting seed for rng
 		rng1 = gsl_rng_alloc(rng1_T);
 		
 		
@@ -156,7 +156,7 @@ int main(int argc, char** argv)
 	nicheweb.d = nicheweb.d/10;
 	printf("d ist %f\n",nicheweb.d);
 	res.size = res.size/10;
-	stochastic.Bmigr = pow(10,stochastic.Bmigr);
+	stochastic.Bmigr = 2.5*stochastic.Bmigr*pow(10,nicheweb.d);
 	nicheweb.Z = pow(10,nicheweb.Z);
 	printf("Bmigr ist %f\n",stochastic.Bmigr);
 	printf("Z ist %i\n",nicheweb.Z);
